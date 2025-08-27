@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>かんたんPDFツール（結合・分割・圧縮・画像→PDF）</title>
+  <meta name="description" content="完全クライアントサイドで動くPDFツール。PDFの結合・分割、画像主体PDFの軽量化、画像→PDF変換をブラウザだけで実行。" />
+  <style>
+    :root { --bg:#0b1020; --card:#121933; --accent:#8be9fd; --text:#e8ecff; --muted:#9aa4c7; --ok:#5cf29a; --warn:#ffd166; }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans JP",sans-serif}
+    header{padding:24px 16px;text-align:center;border-bottom:1px solid #1b254d}
+    header h1{margin:0;font-size:clamp(20px,3vw,28px)}
+    header p{margin:.5rem 0 0;color:var(--muted)}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+    .card{background:var(--card);border:1px solid #1b254d;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.25)}
+    .card h2{margin:0;padding:16px 16px 0;font-size:18px}
+    .card .body{padding:16px}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input[type="file"],input[type="text"],select,button,input[type="number"],input[type="range"]{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #2a366b;background:#0d1430;color:var(--text)}
+    input::file-selector-button{padding:8px 10px;border-radius:8px;border:1px solid #2a366b;background:#0f1a3f;color:var(--text);margin-right:8px}
+    .row{display:flex;gap:10px;align-items:center}
+    .row>*{flex:1}
+    .btn{cursor:pointer;background:linear-gradient(180deg,#243a73,#192655);border:1px solid #2a366b}
+    .btn:hover{filter:brightness(1.08)}
+    .accent{color:var(--accent)}
+    .muted{color:var(--muted)}
+    .note{font-size:12px;color:var(--muted)}
+    .footer{padding:16px;text-align:center;color:var(--muted)}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:#0d1430;border:1px solid #2a366b;color:var(--muted);font-size:12px}
+    .pill{display:inline-block;padding:2px 8px;margin-left:6px;border-radius:999px;background:#14204b;color:#b8c2f2;font-size:11px;border:1px solid #27357a}
+    details{background:#0d1430;border-radius:12px;border:1px dashed #33407a;padding:10px 12px}
+    summary{cursor:pointer}
+    .inline{display:inline}
+    .log{white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;background:#0d1430;border:1px solid #2a366b;color:#bfe2ff;border-radius:12px;padding:10px;max-height:160px;overflow:auto}
+  </style>
+  <!-- ライブラリ（CDN）: pdf-lib / pdf.js / jsPDF -->
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.min.js"></script>
+  <script>pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.min.js";</script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>かんたんPDFツール <span class="pill">100%ブラウザ内処理</span> <span class="pill">無料</span></h1>
+    <p>PDFの<strong>結合・分割・（画像主体の）圧縮・画像→PDF</strong>をローカルだけで完結。広告や課金を付ければ収益化もOK。</p>
+  </header>
+
+  <div class="wrap">
+    <div class="grid">
+      <!-- Merge -->
+      <section class="card">
+        <h2>PDFを結合</h2>
+        <div class="body">
+          <label>複数PDFを選択（順番通りに結合されます）</label>
+          <input id="mergeFiles" type="file" accept="application/pdf" multiple />
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="mergeBtn">結合PDFを作成</button>
+            <button class="btn" id="clearMerge">クリア</button>
+          </div>
+          <p class="note">※ ファイル選択順に結合されます。ドラッグ&ドロップで複数選択もOK。</p>
+        </div>
+      </section>
+
+      <!-- Split -->
+      <section class="card">
+        <h2>PDFを分割</h2>
+        <div class="body">
+          <label>分割したいPDF</label>
+          <input id="splitFile" type="file" accept="application/pdf" />
+          <label style="margin-top:8px">ページ範囲（例: <span class="accent">1-3,5,8-9</span>）</label>
+          <input id="splitRanges" type="text" placeholder="1-3,5,8-9" />
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="splitBtn">指定範囲で書き出し</button>
+            <button class="btn" id="clearSplit">クリア</button>
+          </div>
+          <p class="note">※ ページ番号は1始まり。重複・範囲外は自動で無視します。</p>
+        </div>
+      </section>
+
+      <!-- Compress (image-based) -->
+      <section class="card">
+        <h2>画像主体PDFの軽量化</h2>
+        <div class="body">
+          <label>対象PDF（スキャン/画像多めのPDFで効果大）</label>
+          <input id="compressFile" type="file" accept="application/pdf" />
+          <div class="row" style="margin-top:8px">
+            <div>
+              <label>画質（JPEG品質 0.3〜0.95）</label>
+              <input id="quality" type="range" min="0.3" max="0.95" step="0.05" value="0.7" />
+              <div class="note">現在: <span id="qVal">0.70</span></div>
+            </div>
+            <div>
+              <label>縮尺（解像度スケール 50%〜100%）</label>
+              <input id="scale" type="range" min="0.5" max="1" step="0.05" value="0.8" />
+              <div class="note">現在: <span id="sVal">0.80</span></div>
+            </div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="compressBtn">軽量PDFを書き出し</button>
+            <button class="btn" id="clearCompress">クリア</button>
+          </div>
+          <p class="note">※ テキスト主体PDFの再圧縮には不向きです（画像化するため）。<br>※ 書類提出用途は画質を0.8以上・縮尺0.9以上を推奨。</p>
+        </div>
+      </section>
+
+      <!-- Images to PDF -->
+      <section class="card">
+        <h2>画像 → PDF</h2>
+        <div class="body">
+          <label>画像を選択（JPG/PNG/WebP）</label>
+          <input id="imgFiles" type="file" accept="image/*" multiple />
+          <div class="row" style="margin-top:8px">
+            <div>
+              <label>用紙サイズ</label>
+              <select id="pageSize">
+                <option value="fit">元画像に合わせる</option>
+                <option value="a4p">A4 縦</option>
+                <option value="a4l">A4 横</option>
+              </select>
+            </div>
+            <div>
+              <label>余白（mm）</label>
+              <input id="marginMm" type="number" min="0" max="50" step="1" value="10" />
+            </div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="img2pdfBtn">PDFを作成</button>
+            <button class="btn" id="clearImg">クリア</button>
+          </div>
+          <p class="note">※ 画像はページごとに自動リサイズして配置されます。</p>
+        </div>
+      </section>
+
+      <!-- Utility & Help -->
+      <section class="card">
+        <h2>ヘルプ & サンプル</h2>
+        <div class="body">
+          <p class="badge">使い方のポイント</p>
+          <ul>
+            <li>すべてブラウザ内で処理。データはアップロードされません。</li>
+            <li>処理が重い場合はファイルを小分けに。</li>
+            <li>圧縮は「画像たっぷりPDF」に有効。テキスト主体のPDFは結合/分割のみを推奨。</li>
+          </ul>
+          <details>
+            <summary>サンプルPDF（テスト用）を生成する</summary>
+            <div class="row" style="margin-top:8px">
+              <button class="btn" id="genA">サンプルAを作成</button>
+              <button class="btn" id="genB">サンプルBを作成</button>
+            </div>
+            <p class="note">クリックすると2ページのPDFがダウンロードされます。結合・分割の動作確認に使えます。</p>
+          </details>
+          <div style="margin-top:8px">
+            <label>ログ</label>
+            <div id="log" class="log">Ready.</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="footer">
+      <span class="muted">© 2025 Simple PDF Tools. このページは広告枠を追加して収益化できます。</span>
+    </div>
+  </div>
+
+<script>
+const $ = (sel) => document.querySelector(sel);
+const log = (m) => { const el = $('#log'); el.textContent += "\n" + m; el.scrollTop = el.scrollHeight; };
+
+// --- Utils ---
+function downloadBlob(blob, filename){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+function fileToArrayBuffer(file){
+  return new Promise((res,rej)=>{ const fr = new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsArrayBuffer(file); });
+}
+function parseRanges(input, total){
+  if(!input) return [];
+  const out = new Set();
+  const parts = input.split(',').map(s=>s.trim()).filter(Boolean);
+  for(const p of parts){
+    if(/^[0-9]+$/.test(p)){
+      const n = parseInt(p,10); if(n>=1 && n<=total) out.add(n);
+    } else {
+      const m = p.match(/^([0-9]+)\-([0-9]+)$/);
+      if(m){ let a=parseInt(m[1],10), b=parseInt(m[2],10); if(a>b){const t=a;a=b;b=t;} a=Math.max(1,a); b=Math.min(total,b); for(let i=a;i<=b;i++) out.add(i); }
+    }
+  }
+  return Array.from(out).sort((a,b)=>a-b);
+}
+
+// --- Merge ---
+$('#mergeBtn').addEventListener('click', async ()=>{
+  const files = Array.from($('#mergeFiles').files||[]);
+  if(!files.length){ alert('PDFを選択してください'); return; }
+  log(`Merge: ${files.length} ファイル処理開始`);
+  const outPdf = await PDFLib.PDFDocument.create();
+  for(const f of files){
+    const buf = await fileToArrayBuffer(f);
+    const src = await PDFLib.PDFDocument.load(buf);
+    const pages = await outPdf.copyPages(src, src.getPageIndices());
+    pages.forEach(p=>outPdf.addPage(p));
+  }
+  const bytes = await outPdf.save({ updateFieldAppearances: true });
+  downloadBlob(new Blob([bytes], {type:'application/pdf'}), 'merged.pdf');
+  log('Merge: 完了 merged.pdf を保存');
+});
+$('#clearMerge').addEventListener('click', ()=>{ $('#mergeFiles').value=''; log('Merge: 入力クリア'); });
+
+// --- Split ---
+$('#splitBtn').addEventListener('click', async ()=>{
+  const file = $('#splitFile').files[0];
+  if(!file){ alert('PDFを選択してください'); return; }
+  const buf = await fileToArrayBuffer(file);
+  const src = await PDFLib.PDFDocument.load(buf);
+  const total = src.getPageCount();
+  const pages1 = parseRanges($('#splitRanges').value, total);
+  if(!pages1.length){ alert('正しいページ範囲を入力してください'); return; }
+  const out = await PDFLib.PDFDocument.create();
+  const copied = await out.copyPages(src, pages1.map(n=>n-1));
+  copied.forEach(p=>out.addPage(p));
+  const bytes = await out.save();
+  downloadBlob(new Blob([bytes],{type:'application/pdf'}), 'split.pdf');
+  log(`Split: ${pages1.join(',')} を抽出 -> split.pdf 保存`);
+});
+$('#clearSplit').addEventListener('click', ()=>{ $('#splitFile').value=''; $('#splitRanges').value=''; log('Split: 入力クリア'); });
+
+// --- Compress (image-based via pdf.js + jsPDF) ---
+const { jsPDF } = window.jspdf;
+$('#quality').addEventListener('input', e=> $('#qVal').textContent = Number(e.target.value).toFixed(2));
+$('#scale').addEventListener('input', e=> $('#sVal').textContent = Number(e.target.value).toFixed(2));
+
+$('#compressBtn').addEventListener('click', async ()=>{
+  const file = $('#compressFile').files[0];
+  if(!file){ alert('PDFを選択してください'); return; }
+  const q = Number($('#quality').value);
+  const sc = Number($('#scale').value);
+  const buf = await fileToArrayBuffer(file);
+  const loadingTask = pdfjsLib.getDocument({ data: buf });
+  const pdf = await loadingTask.promise;
+  log(`Compress: ${pdf.numPages}ページ 読み込み`);
+  let doc; let first = true; let totalSaved = 0;
+  for(let p=1; p<=pdf.numPages; p++){
+    const page = await pdf.getPage(p);
+    const viewport = page.getViewport({ scale: sc });
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: false, alpha: false });
+    canvas.width = Math.ceil(viewport.width);
+    canvas.height = Math.ceil(viewport.height);
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    const dataUrl = canvas.toDataURL('image/jpeg', q);
+    const b64 = atob(dataUrl.split(',')[1]);
+    totalSaved += (canvas.width * canvas.height * 4) - b64.length; // 粗い目安
+    const pageWpt = canvas.width * 72 / 96; // px→pt（概算: 96dpi）
+    const pageHpt = canvas.height * 72 / 96;
+    if(first){ doc = new jsPDF({ unit:'pt', format:[pageWpt,pageHpt] }); first=false; }
+    else { doc.addPage([pageWpt,pageHpt]); }
+    doc.addImage(dataUrl, 'JPEG', 0, 0, pageWpt, pageHpt);
+  }
+  const out = doc.output('blob');
+  downloadBlob(out, 'compressed.pdf');
+  log('Compress: 完了 compressed.pdf を保存');
+});
+$('#clearCompress').addEventListener('click', ()=>{ $('#compressFile').value=''; log('Compress: 入力クリア'); });
+
+// --- Images -> PDF ---
+$('#img2pdfBtn').addEventListener('click', async ()=>{
+  const files = Array.from($('#imgFiles').files||[]);
+  if(!files.length){ alert('画像を選択してください'); return; }
+  const sizeSel = $('#pageSize').value; const marginMm = Number($('#marginMm').value)||0;
+  const mm2pt = (mm)=> mm * 72 / 25.4;
+  const a4p = [595.28, 841.89]; // pt
+  const a4l = [841.89, 595.28];
+  let doc; let first=true;
+  for(const f of files){
+    const url = URL.createObjectURL(f);
+    const img = await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=url; });
+    const iw = img.naturalWidth, ih = img.naturalHeight;
+    let pw, ph; // page size pt
+    if(sizeSel==='a4p'){ [pw,ph]=a4p; }
+    else if(sizeSel==='a4l'){ [pw,ph]=a4l; }
+    else { // fit to image px -> pt (96dpi仮定)
+      pw = iw * 72 / 96; ph = ih * 72 / 96; pw=Math.max(100,pw); ph=Math.max(100,ph);
+    }
+    const margin = mm2pt(marginMm);
+    const availW = pw - margin*2, availH = ph - margin*2;
+    const imgRatio = iw/ih; const pageRatio = availW/availH;
+    let w, h;
+    if(imgRatio > pageRatio){ w = availW; h = w / imgRatio; } else { h = availH; w = h * imgRatio; }
+    if(first){ doc = new jsPDF({ unit:'pt', format:[pw,ph] }); first=false; }
+    else { doc.addPage([pw,ph]); }
+    doc.addImage(img, f.type.includes('png')?'PNG':'JPEG', margin + (availW - w)/2, margin + (availH - h)/2, w, h);
+    URL.revokeObjectURL(url);
+  }
+  const out = doc.output('blob');
+  downloadBlob(out, 'images.pdf');
+  log('Images→PDF: 完了 images.pdf を保存');
+});
+$('#clearImg').addEventListener('click', ()=>{ $('#imgFiles').value=''; log('Images→PDF: 入力クリア'); });
+
+// --- Sample PDF generator (for testing) ---
+function makeSample(title, color){
+  const doc = new jsPDF({ unit:'pt', format:'a4' });
+  const pages = 2;
+  for(let p=1;p<=pages;p++){
+    if(p>1) doc.addPage('a4','p');
+    doc.setFillColor(color[0],color[1],color[2]);
+    doc.rect(0,0,595.28,841.89,'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(24); doc.text(`${title} - Page ${p}`, 40, 60);
+    doc.setFontSize(12); doc.text('これはテスト用PDFです。結合/分割の確認に使えます。', 40, 90);
+  }
+  return doc.output('blob');
+}
+$('#genA').addEventListener('click', ()=>{ const b=makeSample('Sample A',[46,134,222]); downloadBlob(b,'sampleA.pdf'); log('サンプルA生成'); });
+$('#genB').addEventListener('click', ()=>{ const b=makeSample('Sample B',[245,130,32]); downloadBlob(b,'sampleB.pdf'); log('サンプルB生成'); });
+
+// --- （任意）広告枠を追加する場合の目印（AdSenseコードは各自で貼付） ---
+// 例: <div id="ad-slot-top"></div> をHTMLに置き、ここでマウント
+// 実運用時はプライバシーポリシーとCookie同意UIも設置してください。
+
+</script>
+</body>
+</html>

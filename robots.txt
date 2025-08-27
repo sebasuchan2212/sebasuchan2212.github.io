@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://sebasuchan2212.github.io/pdf-tools/sitemap.xml
