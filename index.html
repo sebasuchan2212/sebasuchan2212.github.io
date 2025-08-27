@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="google-site-verification" content="" />
   <title>かんたんPDFツール（結合・分割・圧縮・画像→PDF）</title>
   <meta name="description" content="完全クライアントサイドで動くPDFツール。PDFの結合・分割、画像主体PDFの軽量化、画像→PDF変換をブラウザだけで実行。" />
   <style>
@@ -40,11 +41,18 @@
   <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.min.js"></script>
   <script>pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.min.js";</script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<!-- 言語切替リンク（右下に表示） -->
+<div style="position:fixed;right:12px;bottom:12px;z-index:1000;">
+  <a href="/pdf-tools/en/" style="padding:8px 12px;border:1px solid #2a366b;
+    border-radius:12px;background:#0d1430;color:#fff;text-decoration:none;">
+    English
+  </a>
+</div>
 </head>
 <body>
   <header>
     <h1>かんたんPDFツール <span class="pill">100%ブラウザ内処理</span> <span class="pill">無料</span></h1>
-    <p>PDFの<strong>結合・分割・（画像主体の）圧縮・画像→PDF</strong>をローカルだけで完結。広告や課金を付ければ収益化もOK。</p>
+    <p>PDFの<strong>結合・分割・（画像主体の）圧縮・画像→PDF</strong>をローカルだけで完結。</p>
   </header>
 
   <div class="wrap">
@@ -328,3 +336,9 @@ $('#genB').addEventListener('click', ()=>{ const b=makeSample('Sample B',[245,13
 </script>
 </body>
 </html>
+
+
+
+
+
+
