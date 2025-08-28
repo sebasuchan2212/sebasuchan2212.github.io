@@ -3,24 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Search Console / AdSense -->
   <meta name="google-site-verification" content="SgfFDqmY7p7yA_iVepAUYKufsR6WPKkYhLCBTCQPMCs" />
-　<meta name="google-adsense-account" content="ca-pub-8261009874978401">
-  <title>かんたんPDFツール（結合・分割・圧縮・画像→PDF）</title>
-  <meta name="description" content="完全クライアントサイドで動くPDFツール。PDFの結合・分割、画像主体PDFの軽量化、画像→PDF変換をブラウザだけで実行。" />
+  <meta name="google-adsense-account" content="ca-pub-8261009874978401">
+
+  <!-- SEO / Social -->
+  <title>かんたんPDFツール｜結合・分割・圧縮・画像→PDF・編集（100%ブラウザ内・無料）</title>
+  <meta name="description" content="完全クライアントサイドで動くPDFツール。PDFの結合・分割・ページ編集（並べ替え/削除/回転）・画像主体PDFの軽量化・画像→PDF・PDF→画像・OCRまで1ページで完結。" />
+  <link rel="canonical" href="https://sebasuchan2212.github.io/">
+  <link rel="alternate" hreflang="en" href="https://sebasuchan2212.github.io/pdf-tools/en/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="かんたんPDFツール｜結合・分割・圧縮・画像→PDF・編集">
+  <meta property="og:description" content="100%ブラウザ内処理・無料。PDFの結合/分割/ページ編集/圧縮/画像変換/OCRまで。">
+  <meta property="og:url" content="https://sebasuchan2212.github.io/">
+  <meta property="og:image" content="https://sebasuchan2212.github.io/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="かんたんPDFツール｜結合・分割・圧縮・画像→PDF・編集">
+  <meta name="twitter:description" content="データはアップロードされません。完全無料。">
+  <meta name="twitter:image" content="https://sebasuchan2212.github.io/og.png">
+  <meta name="theme-color" content="#0ea5e9">
+
+  <!-- Styles -->
   <style>
-    :root { --bg:#0b1020; --card:#121933; --accent:#8be9fd; --text:#e8ecff; --muted:#9aa4c7; --ok:#5cf29a; --warn:#ffd166; }
+    :root { --bg:#0b1020; --card:#121933; --accent:#8be9fd; --text:#e8ecff; --muted:#9aa4c7; --ok:#5cf29a; --warn:#ffd166; --err:#ef4444; --line:#1b254d; }
     *{box-sizing:border-box}
     html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans JP",sans-serif}
-    header{padding:24px 16px;text-align:center;border-bottom:1px solid #1b254d}
+    a{color:var(--accent);text-decoration:none}
+    header{padding:24px 16px;text-align:center;border-bottom:1px solid var(--line)}
     header h1{margin:0;font-size:clamp(20px,3vw,28px)}
     header p{margin:.5rem 0 0;color:var(--muted)}
-    .wrap{max-width:1100px;margin:0 auto;padding:16px}
-    .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
-    .card{background:var(--card);border:1px solid #1b254d;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.25)}
+    .wrap{max-width:1200px;margin:0 auto;padding:16px}
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.25)}
     .card h2{margin:0;padding:16px 16px 0;font-size:18px}
     .card .body{padding:16px}
     label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-    input[type="file"],input[type="text"],select,button,input[type="number"],input[type="range"]{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #2a366b;background:#0d1430;color:var(--text)}
+    input[type="file"],input[type="text"],select,button,input[type="number"],input[type="range"],textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #2a366b;background:#0d1430;color:var(--text)}
     input::file-selector-button{padding:8px 10px;border-radius:8px;border:1px solid #2a366b;background:#0f1a3f;color:var(--text);margin-right:8px}
     .row{display:flex;gap:10px;align-items:center}
     .row>*{flex:1}
@@ -30,33 +49,82 @@
     .muted{color:var(--muted)}
     .note{font-size:12px;color:var(--muted)}
     .footer{padding:16px;text-align:center;color:var(--muted)}
-    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:#0d1430;border:1px solid #2a366b;color:var(--muted);font-size:12px}
     .pill{display:inline-block;padding:2px 8px;margin-left:6px;border-radius:999px;background:#14204b;color:#b8c2f2;font-size:11px;border:1px solid #27357a}
     details{background:#0d1430;border-radius:12px;border:1px dashed #33407a;padding:10px 12px}
     summary{cursor:pointer}
-    .inline{display:inline}
     .log{white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;background:#0d1430;border:1px solid #2a366b;color:#bfe2ff;border-radius:12px;padding:10px;max-height:160px;overflow:auto}
+    /* Page editor */
+    .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:10px}
+    .thumb{background:#0d1430;border:1px solid #2a366b;border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px}
+    .thumb[draggable="true"]{cursor:grab}
+    .thumb.dragover{outline:2px dashed var(--accent)}
+    .thumb .canvas{background:#0b1020;border:1px solid #2a366b;border-radius:8px;display:flex;align-items:center;justify-content:center;min-height:120px}
+    .btns{display:flex;gap:6px;flex-wrap:wrap}
+    .danger{background:#401a1a;border-color:#6b2222}
+    .tag{font-size:11px;color:#9fb3d9}
+    .hiddenPage{opacity:.4;filter:grayscale(1)}
+    .ad,.aff{background:#0a1222;border:1px dashed #334155;border-radius:14px;padding:12px;margin:10px 0}
+    .ad::before{content:"広告";display:block;font-size:12px;color:#9fb3d9;margin-bottom:6px}
+    .aff::before{content:"おすすめ（アフィ）";display:block;font-size:12px;color:#9fb3d9;margin-bottom:6px}
+    /* Consent toast */
+    .consent{position:fixed;left:12px;right:12px;bottom:12px;background:#0f1a2d;border:1px solid #1f2a44;border-radius:12px;padding:12px;display:none;z-index:9999}
+    .langbar{position:fixed;left:12px;right:12px;top:12px;display:none;z-index:9998;background:#0f1a2d;border:1px solid #1f2a44;border-radius:10px;padding:8px}
   </style>
-  <!-- ライブラリ（CDN）: pdf-lib / pdf.js / jsPDF -->
+
+  <!-- Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.min.js"></script>
   <script>pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.min.js";</script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-<!-- 言語切替リンク（右下に表示） -->
-<div style="position:fixed;right:12px;bottom:12px;z-index:1000;">
-  <a href="/pdf-tools/en/" style="padding:8px 12px;border:1px solid #2a366b;
-    border-radius:12px;background:#0d1430;color:#fff;text-decoration:none;">
-    English
-  </a>
-</div>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+
+  <!-- Schema.org (Software + FAQ) -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"SoftwareApplication",
+    "name":"かんたんPDFツール",
+    "applicationCategory":"UtilitiesApplication",
+    "operatingSystem":"Web",
+    "offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},
+    "url":"https://sebasuchan2212.github.io/",
+    "description":"PDFの結合・分割・ページ編集（並べ替え/削除/回転）・圧縮・画像→PDF・PDF→画像・OCRまでブラウザ内で完結。"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"ファイルはアップロードされますか？","acceptedAnswer":{"@type":"Answer","text":"いいえ。すべてブラウザ内で処理され、サーバーに送信されません。"}},
+      {"@type":"Question","name":"無料で使えますか？","acceptedAnswer":{"@type":"Answer","text":"無料で利用できます。広告・アフィリエイトにより運営されています。"}}
+    ]
+  }
+  </script>
 </head>
 <body>
+  <!-- Language quick link -->
+  <div style="position:fixed;right:12px;bottom:12px;z-index:1000;">
+    <a href="/pdf-tools/en/" style="padding:8px 12px;border:1px solid #2a366b;border-radius:12px;background:#0d1430;color:#fff;text-decoration:none;">English</a>
+  </div>
+
+  <!-- Language suggest bar -->
+  <div id="langbar" class="langbar">
+    <span>It looks like your browser language is English.</span>
+    <a href="/pdf-tools/en/" style="margin-left:10px;text-decoration:underline">Open English version</a>
+    <button id="langbarClose" class="btn" style="margin-left:auto;padding:6px 10px">×</button>
+  </div>
+
   <header>
     <h1>かんたんPDFツール <span class="pill">100%ブラウザ内処理</span> <span class="pill">無料</span></h1>
-    <p>PDFの<strong>結合・分割・（画像主体の）圧縮・画像→PDF</strong>をローカルだけで完結。</p>
+    <p>PDFの<strong>結合・分割・ページ編集（並べ替え/削除/回転）・（画像主体の）圧縮・画像→PDF・PDF→画像・OCR</strong>をローカルだけで完結。</p>
   </header>
 
   <div class="wrap">
+
+    <!-- Ad top -->
+    <div class="ad"><!-- AdSenseコードを貼り付け --></div>
+
     <div class="grid">
       <!-- Merge -->
       <section class="card">
@@ -68,7 +136,7 @@
             <button class="btn" id="mergeBtn">結合PDFを作成</button>
             <button class="btn" id="clearMerge">クリア</button>
           </div>
-          <p class="note">※ ファイル選択順に結合されます。ドラッグ&ドロップで複数選択もOK。</p>
+          <p class="note">※ ファイル選択順に結合。ドラッグ&ドロップ選択もOK。</p>
         </div>
       </section>
 
@@ -78,13 +146,13 @@
         <div class="body">
           <label>分割したいPDF</label>
           <input id="splitFile" type="file" accept="application/pdf" />
-          <label style="margin-top:8px">ページ範囲（例: <span class="accent">1-3,5,8-9</span>）</label>
+          <label style="margin-top:8px">ページ範囲（例: <span class="accent">1-3,5,8-9,7-</span>）</label>
           <input id="splitRanges" type="text" placeholder="1-3,5,8-9" />
           <div class="row" style="margin-top:10px">
-            <button class="btn" id="splitBtn">指定範囲で書き出し</button>
+            <button class="btn" id="splitBtn">指定範囲で書き出し（個別DL）</button>
             <button class="btn" id="clearSplit">クリア</button>
           </div>
-          <p class="note">※ ページ番号は1始まり。重複・範囲外は自動で無視します。</p>
+          <p class="note">※ 1始まり。<code>7-</code> は最終ページまで。重複・範囲外は自動で無視。</p>
         </div>
       </section>
 
@@ -92,7 +160,7 @@
       <section class="card">
         <h2>画像主体PDFの軽量化</h2>
         <div class="body">
-          <label>対象PDF（スキャン/画像多めのPDFで効果大）</label>
+          <label>対象PDF（スキャン/画像多めで効果大）</label>
           <input id="compressFile" type="file" accept="application/pdf" />
           <div class="row" style="margin-top:8px">
             <div>
@@ -110,7 +178,7 @@
             <button class="btn" id="compressBtn">軽量PDFを書き出し</button>
             <button class="btn" id="clearCompress">クリア</button>
           </div>
-          <p class="note">※ テキスト主体PDFの再圧縮には不向きです（画像化するため）。<br>※ 書類提出用途は画質を0.8以上・縮尺0.9以上を推奨。</p>
+          <p class="note">※ テキスト主体PDFには不向き（画像化するため）。提出用は画質0.8+・縮尺0.9+推奨。</p>
         </div>
       </section>
 
@@ -138,7 +206,109 @@
             <button class="btn" id="img2pdfBtn">PDFを作成</button>
             <button class="btn" id="clearImg">クリア</button>
           </div>
-          <p class="note">※ 画像はページごとに自動リサイズして配置されます。</p>
+          <p class="note">※ 画像はページごとにフィット配置されます。</p>
+        </div>
+      </section>
+
+      <!-- NEW: Page Editor (Reorder / Delete / Rotate) -->
+      <section class="card">
+        <h2>ページ編集（並べ替え / 削除 / 回転）</h2>
+        <div class="body">
+          <label>編集したいPDF</label>
+          <input id="editFile" type="file" accept="application/pdf" />
+          <div id="thumbs" class="thumbs"></div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="applyEditBtn">変更を適用して保存</button>
+            <button class="btn" id="clearEdit">クリア</button>
+          </div>
+          <p class="note">※ サムネイルをドラッグして順番変更。削除は「非表示」、回転は90°単位。</p>
+        </div>
+      </section>
+
+      <!-- NEW: Watermark & Metadata -->
+      <section class="card">
+        <h2>ウォーターマーク & メタデータ</h2>
+        <div class="body">
+          <label>対象PDF</label>
+          <input id="wmFile" type="file" accept="application/pdf" />
+          <div class="row" style="margin-top:8px">
+            <div>
+              <label>テキストWM（日本語OK）</label>
+              <input id="wmText" type="text" placeholder="例）© YourSite.jp">
+            </div>
+            <div>
+              <label>透過度（0.05〜0.5）</label>
+              <input id="wmAlpha" type="number" min="0.05" max="0.5" step="0.01" value="0.12">
+            </div>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <div>
+              <label>画像WM（PNG/JPEG）</label>
+              <input id="wmImage" type="file" accept="image/png,image/jpeg">
+            </div>
+            <div>
+              <label>サイズ倍率（0.2〜1.0）</label>
+              <input id="wmScale" type="number" min="0.2" max="1" step="0.1" value="0.6">
+            </div>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <div><label>タイトル</label><input id="metaTitle" type="text" placeholder="任意"></div>
+            <div><label>作成者</label><input id="metaAuthor" type="text" placeholder="任意"></div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="applyWmBtn">WM/メタを適用して保存</button>
+            <button class="btn" id="clearWm">クリア</button>
+          </div>
+          <p class="note">※ テキストWMはキャンバス→PNG化してから貼付するため日本語可。画像WM指定時は画像を優先。</p>
+        </div>
+      </section>
+
+      <!-- NEW: PDF → Image -->
+      <section class="card">
+        <h2>PDF → 画像（PNG/JPEG・ZIP）</h2>
+        <div class="body">
+          <label>対象PDF</label>
+          <input id="p2iFile" type="file" accept="application/pdf" />
+          <div class="row" style="margin-top:8px">
+            <div><label>ページ範囲</label><input id="p2iRanges" type="text" placeholder="例）1-3,5"></div>
+            <div>
+              <label>形式 / 解像度</label>
+              <select id="p2iType">
+                <option value="image/png">PNG</option>
+                <option value="image/jpeg">JPEG</option>
+              </select>
+            </div>
+            <div><label>スケール（1〜3）</label><input id="p2iScale" type="number" min="1" max="3" step="0.5" value="2"></div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="p2iBtn">画像を書き出し（ZIP）</button>
+            <button class="btn" id="clearP2i">クリア</button>
+          </div>
+          <p class="note">※ 大きなPDFは処理に時間がかかります。</p>
+        </div>
+      </section>
+
+      <!-- NEW: OCR (Experimental) -->
+      <section class="card">
+        <h2>OCR（実験）PDFからテキスト抽出</h2>
+        <div class="body">
+          <label>対象PDF（画像ベース推奨）</label>
+          <input id="ocrFile" type="file" accept="application/pdf" />
+          <div class="row" style="margin-top:8px">
+            <div>
+              <label>言語</label>
+              <select id="ocrLang">
+                <option value="jpn">日本語 (jpn)</option>
+                <option value="eng">English (eng)</option>
+              </select>
+            </div>
+            <div><label>処理ページ数（先頭N）</label><input id="ocrPages" type="number" min="1" step="1" value="3"></div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="ocrBtn">OCRを実行（TXT保存）</button>
+            <button class="btn" id="clearOcr">クリア</button>
+          </div>
+          <p class="note">※ 初回のみライブラリ/学習データ取得のため時間がかかります。デバイス性能に依存。</p>
         </div>
       </section>
 
@@ -146,11 +316,11 @@
       <section class="card">
         <h2>ヘルプ & サンプル</h2>
         <div class="body">
-          <p class="badge">使い方のポイント</p>
+          <p class="pill">使い方のポイント</p>
           <ul>
             <li>すべてブラウザ内で処理。データはアップロードされません。</li>
-            <li>処理が重い場合はファイルを小分けに。</li>
-            <li>圧縮は「画像たっぷりPDF」に有効。テキスト主体のPDFは結合/分割のみを推奨。</li>
+            <li>重い場合はファイルを小分けに。</li>
+            <li>圧縮は「画像たっぷりPDF」に有効。テキスト主体は結合/分割/編集のみ推奨。</li>
           </ul>
           <details>
             <summary>サンプルPDF（テスト用）を生成する</summary>
@@ -158,63 +328,76 @@
               <button class="btn" id="genA">サンプルAを作成</button>
               <button class="btn" id="genB">サンプルBを作成</button>
             </div>
-            <p class="note">クリックすると2ページのPDFがダウンロードされます。結合・分割の動作確認に使えます。</p>
+            <p class="note">2ページPDFがDLされます。動作確認に。</p>
           </details>
           <div style="margin-top:8px">
             <label>ログ</label>
             <div id="log" class="log">Ready.</div>
+          </div>
+          <!-- Affiliate -->
+          <div class="aff">
+            <ul style="margin:0;padding-left:18px">
+              <li><a href="#">高速両面スキャナ</a></li>
+              <li><a href="#">A4対応プリンタ</a></li>
+              <li><a href="#">PDF仕事術の本</a></li>
+            </ul>
           </div>
         </div>
       </section>
 
     </div>
 
+    <!-- Ad bottom -->
+    <div class="ad"><!-- AdSenseコードを貼り付け --></div>
+
     <div class="footer">
-      <span class="muted">© 2025 Simple PDF Tools. このページは広告枠を追加して収益化できます。</span>
+      <span class="muted">© 2025 Simple PDF Tools — このページは広告/アフィで収益化できます。</span>
+    </div>
+  </div>
+
+  <!-- Consent (CMPプレースホルダ) -->
+  <div class="consent" id="consent">
+    <strong>クッキー等の利用について</strong>
+    <p class="muted">広告・解析のためにクッキー等を使う場合があります。EEA/UK/CHでは認定CMPの実装が必要です。</p>
+    <div class="row" style="gap:8px">
+      <button id="agree" class="btn" style="flex:0 0 auto;padding:8px 12px;background:#22c55e;border-color:#22c55e;color:#06260f">同意する</button>
+      <button id="prefs" class="btn" style="flex:0 0 auto;padding:8px 12px">オプション</button>
     </div>
   </div>
 
 <script>
-const $ = (sel) => document.querySelector(sel);
-const log = (m) => { const el = $('#log'); el.textContent += "\n" + m; el.scrollTop = el.scrollHeight; };
-
-// --- Utils ---
-function downloadBlob(blob, filename){
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
-}
-function fileToArrayBuffer(file){
-  return new Promise((res,rej)=>{ const fr = new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsArrayBuffer(file); });
-}
+/* ========== Helpers ========== */
+const $ = (s)=>document.querySelector(s);
+const $$ = (s)=>Array.from(document.querySelectorAll(s));
+const log = (m)=>{ const el=$('#log'); el.textContent += "\\n"+m; el.scrollTop = el.scrollHeight; };
+function downloadBlob(blob, filename){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); }
+function fileToArrayBuffer(file){ return new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsArrayBuffer(file); }); }
 function parseRanges(input, total){
   if(!input) return [];
-  const out = new Set();
-  const parts = input.split(',').map(s=>s.trim()).filter(Boolean);
-  for(const p of parts){
-    if(/^[0-9]+$/.test(p)){
-      const n = parseInt(p,10); if(n>=1 && n<=total) out.add(n);
-    } else {
-      const m = p.match(/^([0-9]+)\-([0-9]+)$/);
-      if(m){ let a=parseInt(m[1],10), b=parseInt(m[2],10); if(a>b){const t=a;a=b;b=t;} a=Math.max(1,a); b=Math.min(total,b); for(let i=a;i<=b;i++) out.add(i); }
-    }
+  const out = [];
+  for (const raw of input.split(',').map(s=>s.trim()).filter(Boolean)){
+    if (/^\\d+$/.test(raw)){ const n=+raw; if(n>=1 && n<=total) out.push([n,n]); }
+    else if (/^(\\d+)-(\\d+)$/.test(raw)){ let [_,a,b]=raw.match(/(\\d+)-(\\d+)/); a=+a; b=+b; if(a>b)[a,b]=[b,a]; a=Math.max(1,a); b=Math.min(total,b); if(a<=b) out.push([a,b]); }
+    else if (/^(\\d+)-$/.test(raw)){ let [_,a]=raw.match(/(\\d+)-/); a=+a; if(a<=total) out.push([Math.max(1,a), total]); }
   }
-  return Array.from(out).sort((a,b)=>a-b);
+  // flatten unique sorted
+  const set = new Set(); out.forEach(([a,b])=>{ for(let i=a;i<=b;i++) set.add(i); }); 
+  return Array.from(set).sort((a,b)=>a-b);
 }
 
-// --- Merge ---
+/* ========== Merge ========== */
 $('#mergeBtn').addEventListener('click', async ()=>{
   const files = Array.from($('#mergeFiles').files||[]);
   if(!files.length){ alert('PDFを選択してください'); return; }
   log(`Merge: ${files.length} ファイル処理開始`);
   const outPdf = await PDFLib.PDFDocument.create();
   for(const f of files){
-    const buf = await fileToArrayBuffer(f);
-    const src = await PDFLib.PDFDocument.load(buf);
-    const pages = await outPdf.copyPages(src, src.getPageIndices());
-    pages.forEach(p=>outPdf.addPage(p));
+    try{
+      const buf = await fileToArrayBuffer(f);
+      const src = await PDFLib.PDFDocument.load(buf);
+      const pages = await outPdf.copyPages(src, src.getPageIndices());
+      pages.forEach(p=>outPdf.addPage(p));
+    }catch(e){ console.error(e); alert('読み込み失敗: '+f.name); }
   }
   const bytes = await outPdf.save({ updateFieldAppearances: true });
   downloadBlob(new Blob([bytes], {type:'application/pdf'}), 'merged.pdf');
@@ -222,25 +405,30 @@ $('#mergeBtn').addEventListener('click', async ()=>{
 });
 $('#clearMerge').addEventListener('click', ()=>{ $('#mergeFiles').value=''; log('Merge: 入力クリア'); });
 
-// --- Split ---
+/* ========== Split ========== */
 $('#splitBtn').addEventListener('click', async ()=>{
   const file = $('#splitFile').files[0];
   if(!file){ alert('PDFを選択してください'); return; }
   const buf = await fileToArrayBuffer(file);
   const src = await PDFLib.PDFDocument.load(buf);
   const total = src.getPageCount();
-  const pages1 = parseRanges($('#splitRanges').value, total);
-  if(!pages1.length){ alert('正しいページ範囲を入力してください'); return; }
-  const out = await PDFLib.PDFDocument.create();
-  const copied = await out.copyPages(src, pages1.map(n=>n-1));
-  copied.forEach(p=>out.addPage(p));
-  const bytes = await out.save();
-  downloadBlob(new Blob([bytes],{type:'application/pdf'}), 'split.pdf');
-  log(`Split: ${pages1.join(',')} を抽出 -> split.pdf 保存`);
+  const pages = parseRanges($('#splitRanges').value, total);
+  if(!pages.length){ alert('正しいページ範囲を入力してください'); return; }
+  // 個別DL
+  let idx=1;
+  for (const n of pages){
+    const out = await PDFLib.PDFDocument.create();
+    const [page] = await out.copyPages(src, [n-1]);
+    out.addPage(page);
+    const bytes = await out.save();
+    downloadBlob(new Blob([bytes],{type:'application/pdf'}), `page_${idx++}_${n}.pdf`);
+    await new Promise(r=>setTimeout(r,80));
+  }
+  log(`Split: ${pages.join(',')} を個別保存`);
 });
 $('#clearSplit').addEventListener('click', ()=>{ $('#splitFile').value=''; $('#splitRanges').value=''; log('Split: 入力クリア'); });
 
-// --- Compress (image-based via pdf.js + jsPDF) ---
+/* ========== Compress (image-based via pdf.js + jsPDF) ========== */
 const { jsPDF } = window.jspdf;
 $('#quality').addEventListener('input', e=> $('#qVal').textContent = Number(e.target.value).toFixed(2));
 $('#scale').addEventListener('input', e=> $('#sVal').textContent = Number(e.target.value).toFixed(2));
@@ -254,19 +442,17 @@ $('#compressBtn').addEventListener('click', async ()=>{
   const loadingTask = pdfjsLib.getDocument({ data: buf });
   const pdf = await loadingTask.promise;
   log(`Compress: ${pdf.numPages}ページ 読み込み`);
-  let doc; let first = true; let totalSaved = 0;
+  let doc; let first = true;
   for(let p=1; p<=pdf.numPages; p++){
     const page = await pdf.getPage(p);
     const viewport = page.getViewport({ scale: sc });
     const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d', { willReadFrequently: false, alpha: false });
+    const ctx = canvas.getContext('2d', { alpha:false });
     canvas.width = Math.ceil(viewport.width);
     canvas.height = Math.ceil(viewport.height);
     await page.render({ canvasContext: ctx, viewport }).promise;
     const dataUrl = canvas.toDataURL('image/jpeg', q);
-    const b64 = atob(dataUrl.split(',')[1]);
-    totalSaved += (canvas.width * canvas.height * 4) - b64.length; // 粗い目安
-    const pageWpt = canvas.width * 72 / 96; // px→pt（概算: 96dpi）
+    const pageWpt = canvas.width * 72 / 96;
     const pageHpt = canvas.height * 72 / 96;
     if(first){ doc = new jsPDF({ unit:'pt', format:[pageWpt,pageHpt] }); first=false; }
     else { doc.addPage([pageWpt,pageHpt]); }
@@ -278,33 +464,25 @@ $('#compressBtn').addEventListener('click', async ()=>{
 });
 $('#clearCompress').addEventListener('click', ()=>{ $('#compressFile').value=''; log('Compress: 入力クリア'); });
 
-// --- Images -> PDF ---
+/* ========== Images -> PDF ========== */
 $('#img2pdfBtn').addEventListener('click', async ()=>{
   const files = Array.from($('#imgFiles').files||[]);
   if(!files.length){ alert('画像を選択してください'); return; }
   const sizeSel = $('#pageSize').value; const marginMm = Number($('#marginMm').value)||0;
   const mm2pt = (mm)=> mm * 72 / 25.4;
-  const a4p = [595.28, 841.89]; // pt
-  const a4l = [841.89, 595.28];
+  const a4p = [595.28, 841.89], a4l = [841.89, 595.28];
   let doc; let first=true;
   for(const f of files){
     const url = URL.createObjectURL(f);
     const img = await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=url; });
     const iw = img.naturalWidth, ih = img.naturalHeight;
-    let pw, ph; // page size pt
-    if(sizeSel==='a4p'){ [pw,ph]=a4p; }
-    else if(sizeSel==='a4l'){ [pw,ph]=a4l; }
-    else { // fit to image px -> pt (96dpi仮定)
-      pw = iw * 72 / 96; ph = ih * 72 / 96; pw=Math.max(100,pw); ph=Math.max(100,ph);
-    }
-    const margin = mm2pt(marginMm);
-    const availW = pw - margin*2, availH = ph - margin*2;
-    const imgRatio = iw/ih; const pageRatio = availW/availH;
-    let w, h;
-    if(imgRatio > pageRatio){ w = availW; h = w / imgRatio; } else { h = availH; w = h * imgRatio; }
-    if(first){ doc = new jsPDF({ unit:'pt', format:[pw,ph] }); first=false; }
-    else { doc.addPage([pw,ph]); }
-    doc.addImage(img, f.type.includes('png')?'PNG':'JPEG', margin + (availW - w)/2, margin + (availH - h)/2, w, h);
+    let pw, ph;
+    if(sizeSel==='a4p'){ [pw,ph]=a4p; } else if(sizeSel==='a4l'){ [pw,ph]=a4l; }
+    else { pw = Math.max(100, iw * 72 / 96); ph = Math.max(100, ih * 72 / 96); }
+    const margin = mm2pt(marginMm), availW = pw - margin*2, availH = ph - margin*2;
+    const r = Math.min(availW/iw, availH/ih); const w = iw*r, h = ih*r;
+    if(first){ doc = new jsPDF({ unit:'pt', format:[pw,ph] }); first=false; } else { doc.addPage([pw,ph]); }
+    doc.addImage(img, f.type.includes('png')?'PNG':'JPEG', margin+(availW-w)/2, margin+(availH-h)/2, w, h);
     URL.revokeObjectURL(url);
   }
   const out = doc.output('blob');
@@ -313,7 +491,203 @@ $('#img2pdfBtn').addEventListener('click', async ()=>{
 });
 $('#clearImg').addEventListener('click', ()=>{ $('#imgFiles').value=''; log('Images→PDF: 入力クリア'); });
 
-// --- Sample PDF generator (for testing) ---
+/* ========== NEW: Page Editor (Reorder/Delete/Rotate) ========== */
+const editState = { pdf:null, bytes:null, pages:[], file:null };
+$('#editFile').addEventListener('change', async (e)=>{
+  const f = e.target.files[0]; if(!f) return;
+  editState.file = f;
+  editState.bytes = await fileToArrayBuffer(f);
+  editState.pdf = await pdfjsLib.getDocument({data:editState.bytes}).promise;
+  editState.pages = Array.from({length:editState.pdf.numPages}, (_,i)=>({idx:i+1, rot:0, hidden:false}));
+  await renderThumbs();
+  log(`Edit: ${editState.pages.length}ページを読み込みました`);
+});
+$('#clearEdit').addEventListener('click', ()=>{ $('#editFile').value=''; $('#thumbs').innerHTML=''; Object.assign(editState,{pdf:null,bytes:null,pages:[],file:null}); });
+
+async function renderThumbs(){
+  const wrap = $('#thumbs'); wrap.innerHTML='';
+  for (const pageInfo of editState.pages){
+    const p = await editState.pdf.getPage(pageInfo.idx);
+    const viewport = p.getViewport({scale:0.3});
+    const c = document.createElement('canvas'); c.width=viewport.width; c.height=viewport.height;
+    await p.render({canvasContext:c.getContext('2d'), viewport}).promise;
+    const item = document.createElement('div');
+    item.className = 'thumb'; item.draggable = true; item.dataset.page = String(pageInfo.idx);
+    const cv = document.createElement('div'); cv.className='canvas'; cv.appendChild(c);
+    const ctr = document.createElement('div'); ctr.className='btns';
+    ctr.innerHTML = `
+      <button class="btn" data-act="rot">↻ 回転</button>
+      <button class="btn danger" data-act="hide">${pageInfo.hidden?'表示':'非表示'}</button>
+      <span class="tag">#${pageInfo.idx}</span>
+    `;
+    if(pageInfo.hidden) item.classList.add('hiddenPage');
+    item.appendChild(cv); item.appendChild(ctr); wrap.appendChild(item);
+
+    // actions
+    ctr.querySelector('[data-act="rot"]').onclick = ()=>{ pageInfo.rot = (pageInfo.rot+90)%360; log(\`Page ${pageInfo.idx}: rot=\${pageInfo.rot}\`); };
+    ctr.querySelector('[data-act="hide"]').onclick = (ev)=>{ pageInfo.hidden = !pageInfo.hidden; ev.target.textContent = pageInfo.hidden?'表示':'非表示'; item.classList.toggle('hiddenPage', pageInfo.hidden); };
+
+    // drag & drop
+    item.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', pageInfo.idx); });
+    item.addEventListener('dragover', e=>{ e.preventDefault(); item.classList.add('dragover'); });
+    item.addEventListener('dragleave', ()=> item.classList.remove('dragover'));
+    item.addEventListener('drop', e=>{
+      e.preventDefault(); item.classList.remove('dragover');
+      const from = +e.dataTransfer.getData('text/plain');
+      const to = pageInfo.idx;
+      const arr = editState.pages;
+      const a = arr.findIndex(x=>x.idx===from), b = arr.findIndex(x=>x.idx===to);
+      const [moved] = arr.splice(a,1); arr.splice(b,0,moved);
+      // 再インデックス
+      arr.forEach((x,i)=> x.idx = i+1);
+      renderThumbs();
+    });
+  }
+}
+
+$('#applyEditBtn').addEventListener('click', async ()=>{
+  if(!editState.bytes){ alert('PDFを選択してください'); return; }
+  const src = await PDFLib.PDFDocument.load(editState.bytes);
+  const out = await PDFLib.PDFDocument.create();
+  const { degrees } = PDFLib;
+  // 現在の並び順で非表示を除外
+  const kept = editState.pages.filter(p=>!p.hidden);
+  if(!kept.length){ alert('1ページ以上残してください'); return; }
+  for (const p of kept){
+    const [copied] = await out.copyPages(src, [p.idx-1]);
+    if(p.rot){ copied.setRotation(degrees(p.rot)); }
+    out.addPage(copied);
+  }
+  const bytes = await out.save();
+  downloadBlob(new Blob([bytes],{type:'application/pdf'}), 'edited.pdf');
+  log('Edit: 変更を適用して edited.pdf を保存');
+});
+
+/* ========== NEW: Watermark & Metadata ========== */
+async function textToPngBytes(text, scale=2){
+  const pad = 20*scale; const fs = 28*scale;
+  const cv = document.createElement('canvas'); const ctx = cv.getContext('2d');
+  ctx.font = `${fs}px "Noto Sans JP", system-ui, sans-serif`;
+  const w = Math.ceil(ctx.measureText(text).width) + pad*2, h = fs + pad*2;
+  cv.width=w; cv.height=h;
+  ctx.font = `${fs}px "Noto Sans JP", system-ui, sans-serif`; ctx.fillStyle="rgba(255,255,255,1)";
+  ctx.textBaseline="top"; ctx.shadowColor="rgba(0,0,0,.35)"; ctx.shadowBlur=4*scale;
+  ctx.fillText(text, pad, pad);
+  const blob = await new Promise(res=> cv.toBlob(res,'image/png'));
+  return new Uint8Array(await blob.arrayBuffer());
+}
+
+$('#applyWmBtn').addEventListener('click', async ()=>{
+  const f = $('#wmFile').files[0];
+  if(!f){ alert('PDFを選択してください'); return; }
+  const buf = await fileToArrayBuffer(f);
+  const src = await PDFLib.PDFDocument.load(buf);
+  const out = await PDFLib.PDFDocument.create();
+  const { degrees, rgb } = PDFLib;
+
+  // 画像WM or テキストWM（PNG化）
+  let wmBytes=null, isImg=false;
+  const imgFile = $('#wmImage').files[0];
+  const txt = $('#wmText').value.trim();
+  if (imgFile){
+    wmBytes = new Uint8Array(await imgFile.arrayBuffer()); isImg=true;
+  } else if (txt){
+    wmBytes = await textToPngBytes(txt, 2); isImg=true;
+  }
+  const alpha = Math.max(0.05, Math.min(0.5, parseFloat($('#wmAlpha').value)||0.12));
+  const scale = Math.max(0.2, Math.min(1, parseFloat($('#wmScale').value)||0.6));
+  const title = $('#metaTitle').value.trim(); const author = $('#metaAuthor').value.trim();
+
+  let wmEmbed=null;
+  if (wmBytes){ wmEmbed = await out.embedPng(wmBytes); }
+
+  const pages = await out.copyPages(src, src.getPageIndices());
+  for (const p of pages){
+    out.addPage(p);
+  }
+  if (wmEmbed){
+    out.getPages().forEach(page=>{
+      const { width, height } = page.getSize();
+      const w = wmEmbed.width * scale, h = wmEmbed.height * scale;
+      page.drawImage(wmEmbed, {
+        x: (width - w)/2, y: (height - h)/2,
+        width: w, height: h, opacity: alpha, rotate: degrees(30)
+      });
+    });
+  }
+  if (title) out.setTitle(title);
+  if (author) out.setAuthor(author);
+  const bytes = await out.save();
+  downloadBlob(new Blob([bytes],{type:'application/pdf'}), 'watermarked.pdf');
+  log('WM: 適用完了 watermarked.pdf を保存');
+});
+$('#clearWm').addEventListener('click', ()=>{ $('#wmFile').value=''; $('#wmText').value=''; $('#wmImage').value=''; $('#wmAlpha').value='0.12'; $('#wmScale').value='0.6'; $('#metaTitle').value=''; $('#metaAuthor').value=''; });
+
+/* ========== NEW: PDF → Image ========== */
+$('#p2iBtn').addEventListener('click', async ()=>{
+  const f = $('#p2iFile').files[0]; if(!f){ alert('PDFを選択'); return; }
+  const buf = await fileToArrayBuffer(f);
+  const pdf = await pdfjsLib.getDocument({data:buf}).promise;
+  const total = pdf.numPages;
+  const picks = parseRanges($('#p2iRanges').value, total);
+  const pages = picks.length ? picks : Array.from({length:total}, (_,i)=>i+1);
+  const type = $('#p2iType').value;
+  const scale = Math.max(1, Math.min(3, parseFloat($('#p2iScale').value)||2));
+  const zip = new JSZip();
+  let i=1;
+  for (const n of pages){
+    const page = await pdf.getPage(n);
+    const viewport = page.getViewport({scale});
+    const c = document.createElement('canvas'); c.width=viewport.width; c.height=viewport.height;
+    await page.render({canvasContext:c.getContext('2d'), viewport}).promise;
+    const blob = await new Promise(res=> c.toBlob(res, type, type==='image/jpeg'?0.92:undefined));
+    zip.file(`page_${String(i).padStart(3,'0')}.` + (type==='image/png'?'png':'jpg'), await blob.arrayBuffer());
+    i++; await new Promise(r=>setTimeout(r,20));
+  }
+  const out = await zip.generateAsync({type:'blob'});
+  downloadBlob(out, 'pdf_images.zip');
+  log('PDF→画像: ZIP保存');
+});
+$('#clearP2i').addEventListener('click', ()=>{ $('#p2iFile').value=''; $('#p2iRanges').value=''; });
+
+/* ========== NEW: OCR (Experimental / Tesseract.js lazy load) ========== */
+let TesseractLib=null;
+async function ensureTesseract(){
+  if (TesseractLib) return TesseractLib;
+  await new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+    s.onload=res; s.onerror=rej; document.head.appendChild(s);
+  });
+  TesseractLib = window.Tesseract;
+  return TesseractLib;
+}
+$('#ocrBtn').addEventListener('click', async ()=>{
+  const f = $('#ocrFile').files[0]; if(!f){ alert('PDFを選択'); return; }
+  await ensureTesseract();
+  const lang = $('#ocrLang').value;
+  const maxN = Math.max(1, parseInt($('#ocrPages').value||'1',10));
+  const buf = await fileToArrayBuffer(f);
+  const pdf = await pdfjsLib.getDocument({data:buf}).promise;
+  const total = pdf.numPages, N = Math.min(maxN, total);
+  log(`OCR: 最初の${N}ページを ${lang} で解析`);
+  let text = '';
+  for (let i=1;i<=N;i++){
+    const page = await pdf.getPage(i);
+    const viewport = page.getViewport({scale:2}); // 2xでレンダ
+    const c=document.createElement('canvas'); c.width=viewport.width; c.height=viewport.height;
+    await page.render({canvasContext:c.getContext('2d'), viewport}).promise;
+    const dataUrl = c.toDataURL('image/png');
+    const { data } = await TesseractLib.recognize(dataUrl, lang, { logger:m=>{} });
+    text += (text? '\\n\\n' : '') + data.text.trim();
+  }
+  const blob = new Blob([text], {type:'text/plain; charset=utf-8'});
+  downloadBlob(blob, 'ocr.txt');
+  log('OCR: 完了 ocr.txt を保存');
+});
+$('#clearOcr').addEventListener('click', ()=>{ $('#ocrFile').value=''; $('#ocrPages').value='3'; });
+
+/* ========== Samples ========== */
 function makeSample(title, color){
   const doc = new jsPDF({ unit:'pt', format:'a4' });
   const pages = 2;
@@ -323,26 +697,32 @@ function makeSample(title, color){
     doc.rect(0,0,595.28,841.89,'F');
     doc.setTextColor(255,255,255);
     doc.setFontSize(24); doc.text(`${title} - Page ${p}`, 40, 60);
-    doc.setFontSize(12); doc.text('これはテスト用PDFです。結合/分割の確認に使えます。', 40, 90);
+    doc.setFontSize(12); doc.text('これはテスト用PDFです。結合/分割/編集の確認に。', 40, 90);
   }
   return doc.output('blob');
 }
 $('#genA').addEventListener('click', ()=>{ const b=makeSample('Sample A',[46,134,222]); downloadBlob(b,'sampleA.pdf'); log('サンプルA生成'); });
 $('#genB').addEventListener('click', ()=>{ const b=makeSample('Sample B',[245,130,32]); downloadBlob(b,'sampleB.pdf'); log('サンプルB生成'); });
 
-// --- （任意）広告枠を追加する場合の目印（AdSenseコードは各自で貼付） ---
-// 例: <div id="ad-slot-top"></div> をHTMLに置き、ここでマウント
-// 実運用時はプライバシーポリシーとCookie同意UIも設置してください。
+/* ========== Consent (placeholder) ========== */
+(function(){
+  const box = $('#consent');
+  if (!localStorage.getItem('consent_ok')) setTimeout(()=> box.style.display='block', 600);
+  $('#agree').onclick = ()=>{ localStorage.setItem('consent_ok','1'); box.remove(); };
+  $('#prefs').onclick = ()=> alert('EEA/UK/CHではGoogle認定CMPを導入してください。');
+})();
 
+/* ========== Language bar (auto suggest) ========== */
+(function(){
+  try{
+    const nav = (navigator.language||'').toLowerCase();
+    if (nav.startsWith('en')) { const b=$('#langbar'); b.style.display='flex'; $('#langbarClose').onclick=()=> b.remove(); }
+  }catch{}
+})();
 </script>
+
+<!-- PWA（任意）：/manifest.json と /service-worker.js を追加し、ここで登録する
+<script> if('serviceWorker' in navigator){ navigator.serviceWorker.register('/service-worker.js'); } </script>
+-->
 </body>
 </html>
-
-
-
-
-
-
-
-
-
