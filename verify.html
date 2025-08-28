@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verify cryptographic seal (ES256)</title>
+  <meta name="theme-color" content="#0ea5e9">
+  <link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>Verify cryptographic seal (ES256)</h1>
+  <div class="card body">
+    <p>1) Select sealed PDF. 2) Paste <code>seal.json</code> OR scan QR from camera. 3) Verify.</p>
+    <div class="row"><div><label>Sealed PDF</label><input id="pdf" type="file" accept="application/pdf"></div></div>
+    <label>seal.json</label>
+    <textarea id="seal" rows="10" placeholder='{"alg":"ES256","hash":"SHA-256","pdfHash":"...","pubKeyJwk":{...},"signature":"..."}'></textarea>
+    <div class="row" style="margin-top:10px"><button id="btn">Verify</button><button id="scan">Scan QR</button></div>
+    <video id="v" playsinline style="width:100%;max-height:240px;margin-top:8px;display:none"></video>
+    <div class="log" id="log">Ready.</div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script>
+const log = m=>{ const el=document.getElementById('log'); el.textContent += "\n"+m; el.scrollTop=el.scrollHeight; }
+async function sha256(buf){ const d=await crypto.subtle.digest('SHA-256', buf); return Array.from(new Uint8Array(d)).map(b=>('0'+b.toString(16)).slice(-2)).join(''); }
+function b64ToArray(b64){ const bin=atob(b64); return new Uint8Array([...bin].map(c=>c.charCodeAt(0))); }
+document.getElementById('btn').onclick = async ()=>{
+  try{
+    const f=document.getElementById('pdf').files[0]; if(!f) return alert('Select PDF');
+    const payload=JSON.parse(document.getElementById('seal').value);
+    if(payload.alg!=='ES256' || payload.hash!=='SHA-256') throw new Error('Unsupported alg');
+    const hash = await sha256(await f.arrayBuffer()); log('SHA-256: '+hash);
+    if(hash !== payload.pdfHash) throw new Error('Hash mismatch');
+    const key = await crypto.subtle.importKey('jwk', payload.pubKeyJwk, { name:'ECDSA', namedCurve:'P-256' }, false, ['verify']);
+    const ok = await crypto.subtle.verify({ name:'ECDSA', hash:'SHA-256' }, key, b64ToArray(payload.signature), new TextEncoder().encode(hash));
+    log(ok? '✅ VALID' : '❌ INVALID');
+  }catch(e){ alert('Verify error: '+e.message); }
+};
+
+// QR scan
+const v=document.getElementById('v');
+document.getElementById('scan').onclick = async ()=>{
+  try{
+    const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode:'environment' } });
+    v.srcObject = s; v.style.display='block'; await v.play();
+    const cv=document.createElement('canvas'); const ctx=cv.getContext('2d');
+    (function loop(){
+      if(v.readyState === v.HAVE_ENOUGH_DATA){
+        cv.width=v.videoWidth; cv.height=v.videoHeight; ctx.drawImage(v,0,0,cv.width,cv.height);
+        const imgData=ctx.getImageData(0,0,cv.width,cv.height); const code=jsQR(imgData.data, cv.width, cv.height);
+        if(code){ try{ document.getElementById('seal').value = code.data; v.srcObject.getTracks().forEach(t=>t.stop()); v.style.display='none'; log('QR read ✓'); return; }catch{} }
+      }
+      requestAnimationFrame(loop);
+    })();
+  }catch(e){ alert('Camera error: '+e.message); }
+};
+</script>
+</body>
+</html>
