@@ -1,166 +1,140 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title data-i18n="title">かんたんPDFツール Neo</title>
-  <meta name="description" content="100%ブラウザ内で動く次世代PDFツール。結合/分割/編集/圧縮/画像⇄PDF/OCR/フォーム/手書き/暗号学的シール/PWA/EXIF。" />
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Simple PDF Tools Neo">
-  <meta property="og:description" content="OOP・PWA・EXIF・ES256 QR Seal・完全クライアントサイド。">
-  <meta property="og:image" content="/og.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="theme-color" content="#0ea5e9">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="/icons/icon-192.png">
-  <link rel="stylesheet" href="/assets/app.css">
-  <!-- Libraries -->
-  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.min.js"></script>
-  <script>pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.min.js";</script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/full.umd.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="theme-color" content="#0ea5e9"/>
+
+  <!-- SEO / Social -->
+  <title>かんたんPDFツール Neo｜100%ブラウザ内処理・無料｜結合/分割/圧縮/OCR/画像→PDF</title>
+  <meta name="description" content="完全クライアントサイドのPDFツール『かんたんPDFツール Neo』。結合・分割・ページ編集・圧縮・画像→PDF・PDF→画像・OCR・暗号学的シールまで1ページで完結。100%ブラウザ内・無料。"/>
+  <link rel="canonical" href="https://sebasuchan2212.github.io/"/>
+  <link rel="alternate" hreflang="ja" href="https://sebasuchan2212.github.io/"/>
+  <link rel="alternate" hreflang="en" href="https://sebasuchan2212.github.io/en/"/>
+  <link rel="alternate" hreflang="es" href="https://sebasuchan2212.github.io/es/"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="かんたんPDFツール Neo｜100%ブラウザ内処理・無料"/>
+  <meta property="og:description" content="PDFの結合/分割/編集/圧縮/画像変換/OCR/暗号学的シールまで。データはアップロードされません。"/>
+  <meta property="og:url" content="https://sebasuchan2212.github.io/"/>
+  <meta property="og:image" content="https://sebasuchan2212.github.io/og.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+
+  <!-- Styles (minimal; keep your existing app.css if present) -->
+  <style>
+    :root { --bg:#0b1020; --card:#121933; --accent:#0ea5e9; --text:#e8ecff; --muted:#9aa4c7; --line:#1b254d; }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans JP",sans-serif}
+    a{color:var(--accent);text-decoration:none}
+    header{padding:28px 16px;text-align:center;border-bottom:1px solid var(--line)}
+    header h1{margin:0;font-size:clamp(22px,3.2vw,34px)}
+    header p{margin:.5rem 0 0;color:var(--muted)}
+    nav.top{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line)}
+    nav.top a{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#0f1a3f;color:#dfe7ff}
+    .wrap{max-width:1100px;margin:0 auto;padding:16px}
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.25)}
+    .card h2{margin:0;padding:16px 16px 0;font-size:20px}
+    .card .body{padding:16px}
+    .content main{max-width:920px;margin:0 auto;line-height:1.9}
+    .content h2{margin-top:28px;border-left:4px solid var(--accent);padding-left:10px}
+    .content p, .content li{color:#dbe3ff}
+    .faq details{background:#0d1430;border:1px dashed #33407a;border-radius:12px;padding:12px;margin:12px 0}
+    .footer{padding:24px 16px;text-align:center;color:var(--muted);border-top:1px solid var(--line);margin-top:30px}
+    .note{color:var(--muted);font-size:12px}
+    .ad-block{margin:24px auto;text-align:center}
+    .pill{display:inline-block;padding:2px 8px;margin-left:6px;border-radius:999px;background:#14204b;color:#b8c2f2;font-size:11px;border:1px solid #27357a}
+  </style>
+
+  <!-- AdSense (content pages only) + AdSafe (ensure policy compliance) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8261009874978401" crossorigin="anonymous"></script>
+  <script src="/assets/adsafe.js" defer></script>
+
+  <!-- (Optional) keep your existing libraries and app.js here -->
+  <!-- <script src="/assets/app.js" defer></script> -->
 </head>
 <body>
-  <div id="langbar" class="langbar">
-    <span data-i18n="lang_suggest">English is available.</span>
-    <a href="/en/" style="margin-left:10px;text-decoration:underline">Open English</a>
-    <a href="/es/" style="margin-left:10px;text-decoration:underline">Abrir Español</a>
-    <button id="langbarClose" class="btn" style="margin-left:auto;padding:6px 10px">×</button>
-  </div>
   <header>
-    <h1 data-i18n="headline">かんたんPDFツール Neo <span class="pill">100%ブラウザ内処理</span> <span class="pill">無料</span></h1>
-    <p data-i18n="sub">結合・分割・編集・圧縮・画像⇄PDF・OCR・フォーム・手書きサイン・暗号学的シール（実験）をローカルで完結。PWA / EXIF自動回転 / 多言語。</p>
+    <h1>かんたんPDFツール Neo <span class="pill">100%ブラウザ内処理</span> <span class="pill">無料</span></h1>
+    <p>結合・分割・ページ編集・圧縮・画像⇄PDF・OCR・暗号学的シールまでワンページで完結。</p>
   </header>
 
+  <nav class="top">
+    <a href="#howto">使い方</a>
+    <a href="#usecases">ユースケース</a>
+    <a href="#faq">よくある質問</a>
+    <a href="#policy">ご利用上の注意</a>
+    <a href="#contact">お問い合わせ</a>
+  </nav>
+
   <div class="wrap">
-    <div class="ad"></div>
-    <div class="grid">
-      <section class="card"><h2 data-i18n="merge_h">PDFを結合</h2><div class="body">
-        <label data-i18n="merge_label">PDFを選択</label><input id="mergeFiles" type="file" accept="application/pdf" multiple />
-        <div class="row" style="margin-top:10px"><button class="btn" id="mergeBtn" data-i18n="btn_create">作成</button><button class="btn" id="clearMerge" data-i18n="btn_clear">クリア</button></div>
-      </div></section>
-
-      <section class="card"><h2 data-i18n="split_h">PDFを分割</h2><div class="body">
-        <label>PDF</label><input id="splitFile" type="file" accept="application/pdf" />
-        <label data-i18n="ranges">ページ範囲（例: 1-3,5,8-）</label><input id="splitRanges" type="text" placeholder="1-3,5,8-" />
-        <div class="row" style="margin-top:10px"><button class="btn" id="splitBtn" data-i18n="btn_export">書き出し</button><button class="btn" id="clearSplit" data-i18n="btn_clear">クリア</button></div>
-      </div></section>
-
-      <section class="card"><h2 data-i18n="compress_h">画像主体PDFの軽量化</h2><div class="body">
-        <label>PDF</label><input id="compressFile" type="file" accept="application/pdf" />
-        <div class="row" style="margin-top:8px">
-          <div><label data-i18n="jpeg_q">JPEG品質 0.3–0.95</label><input id="quality" type="range" min="0.3" max="0.95" step="0.05" value="0.7"/><div class="note">q: <span id="qVal">0.70</span></div></div>
-          <div><label data-i18n="scale">スケール 0.5–1.0</label><input id="scale" type="range" min="0.5" max="1" step="0.05" value="0.8"/><div class="note">s: <span id="sVal">0.80</span></div></div>
-        </div>
-        <div class="row" style="margin-top:10px"><button class="btn" id="compressBtn" data-i18n="btn_export">書き出し</button><button class="btn" id="clearCompress" data-i18n="btn_clear">クリア</button></div>
-      </div></section>
-
-      <section class="card"><h2 data-i18n="imgpdf_h">画像 → PDF（EXIF自動回転）</h2><div class="body">
-        <label data-i18n="images">画像</label><input id="imgFiles" type="file" accept="image/*" multiple />
-        <div class="row" style="margin-top:8px">
-          <div><label data-i18n="page_size">用紙サイズ</label><select id="pageSize"><option value="fit" data-i18n="fit">元画像</option><option value="a4p">A4 縦</option><option value="a4l">A4 横</option></select></div>
-          <div><label data-i18n="margins">余白（mm）</label><input id="marginMm" type="number" min="0" max="50" step="1" value="10" /></div>
-        </div>
-        <div class="row" style="margin-top:10px"><button class="btn" id="img2pdfBtn" data-i18n="btn_create">作成</button><button class="btn" id="clearImg" data-i18n="btn_clear">クリア</button></div>
-      </div></section>
-
-      <section class="card"><h2 data-i18n="editor_h">ページ編集（並べ替え/削除/回転）</h2><div class="body">
-        <label>PDF</label><input id="editFile" type="file" accept="application/pdf" />
-        <div id="thumbs" class="thumbs"></div>
-        <div class="row" style="margin-top:10px"><button class="btn" id="applyEditBtn" data-i18n="btn_apply">適用して保存</button><button class="btn" id="clearEdit" data-i18n="btn_clear">クリア</button></div>
-      </div></section>
-
-      <section class="card"><h2 data-i18n="wm_h">ウォーターマーク & メタデータ</h2><div class="body">
-        <label>PDF</label><input id="wmFile" type="file" accept="application/pdf" />
-        <div class="row" style="margin-top:8px">
-          <div><label data-i18n="wm_text">テキストWM</label><input id="wmText" type="text" placeholder="© YourSite"></div>
-          <div><label data-i18n="opacity">透過度</label><input id="wmAlpha" type="number" min="0.05" max="0.5" step="0.01" value="0.12"></div>
-        </div>
-        <div class="row" style="margin-top:8px">
-          <div><label data-i18n="wm_img">画像WM</label><input id="wmImage" type="file" accept="image/png,image/jpeg"></div>
-          <div><label data-i18n="wm_scale">サイズ倍率</label><input id="wmScale" type="number" min="0.2" max="1" step="0.1" value="0.6"></div>
-        </div>
-        <div class="row" style="margin-top:8px">
-          <div><label data-i18n="title">タイトル</label><input id="metaTitle" type="text"></div>
-          <div><label data-i18n="author">作成者</label><input id="metaAuthor" type="text"></div>
-        </div>
-        <div class="row" style="margin-top:10px"><button class="btn" id="applyWmBtn" data-i18n="btn_apply">適用して保存</button><button class="btn" id="clearWm" data-i18n="btn_clear">クリア</button></div>
-      </div></section>
-
-      <section class="card"><h2 data-i18n="p2i_h">PDF → 画像（ZIP）</h2><div class="body">
-        <label>PDF</label><input id="p2iFile" type="file" accept="application/pdf" />
-        <div class="row" style="margin-top:8px">
-          <div><label data-i18n="ranges">ページ範囲</label><input id="p2iRanges" type="text" placeholder="1-3,5"></div>
-          <div><label data-i18n="type">形式</label><select id="p2iType"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option></select></div>
-          <div><label data-i18n="scale">スケール</label><input id="p2iScale" type="number" min="1" max="3" step="0.5" value="2"></div>
-        </div>
-        <div class="row" style="margin-top:10px"><button class="btn" id="p2iBtn" data-i18n="btn_export">書き出し</button><button class="btn" id="clearP2i" data-i18n="btn_clear">クリア</button></div>
-      </div></section>
-
-      <section class="card"><h2>OCR</h2><div class="body">
-        <label>PDF</label><input id="ocrFile" type="file" accept="application/pdf" />
-        <div class="row" style="margin-top:8px">
-          <div><label data-i18n="language">言語</label><select id="ocrLang"><option value="jpn">日本語</option><option value="eng">English</option></select></div>
-          <div><label data-i18n="pages">処理ページ数</label><input id="ocrPages" type="number" min="1" step="1" value="3"></div>
-        </div>
-        <div class="row" style="margin-top:10px"><button class="btn" id="ocrBtn" data-i18n="btn_run">実行</button><button class="btn" id="clearOcr" data-i18n="btn_clear">クリア</button></div>
-      </div></section>
-
-      <section class="card"><h2 data-i18n="form_h">フォーム入力 & フラット化</h2><div class="body">
-        <label>PDF</label><input id="formFile" type="file" accept="application/pdf" />
-        <div class="row" style="margin-top:8px"><button class="btn" id="formScan" data-i18n="scan">項目をスキャン</button><button class="btn" id="formApply" data-i18n="btn_apply">適用して保存</button></div>
-        <div style="margin-top:8px;overflow:auto"><table class="fields" id="formTable" style="display:none"><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody></tbody></table></div>
-      </div></section>
-
-      <section class="card"><h2 data-i18n="hand_h">手書きサイン</h2><div class="body">
-        <label>PDF</label><input id="sigPdf" type="file" accept="application/pdf" />
-        <label data-i18n="draw" style="margin-top:8px">キャンバスに描く</label>
-        <canvas id="sigpad" width="360" height="140" style="background:#0d1430;border:1px solid #2a366b;border-radius:8px"></canvas>
-        <div class="row" style="margin-top:8px">
-          <div><label data-i18n="page">ページ</label><input id="sigPage" type="number" min="1" value="1"></div>
-          <div><label data-i18n="position">位置</label><select id="sigPos"><option value="rb">RB</option><option value="lb">LB</option><option value="rt">RT</option><option value="lt">LT</option><option value="center">Center</option></select></div>
-          <div><label data-i18n="width">幅(pt)</label><input id="sigWidth" type="number" min="60" step="10" value="180"></div>
-          <div><label data-i18n="opacity">透過度</label><input id="sigAlpha" type="number" min="0.2" max="1" step="0.05" value="0.98"></div>
-        </div>
-        <div class="row" style="margin-top:10px"><button class="btn" id="sigClear" data-i18n="btn_clear">クリア</button><button class="btn" id="sigApply" data-i18n="btn_apply">適用して保存</button></div>
-      </div></section>
-
-      <section class="card"><h2 data-i18n="outline_h">しおり分割 → ZIP</h2><div class="body">
-        <label>PDF</label><input id="olFile" type="file" accept="application/pdf" />
-        <div class="row" style="margin-top:10px"><button class="btn" id="olSplit" data-i18n="btn_run">実行</button></div>
-      </div></section>
-
-      <section class="card"><h2 data-i18n="kw_h">キーワード抽出</h2><div class="body">
-        <label>PDF</label><input id="kwFile" type="file" accept="application/pdf" />
-        <div class="row" style="margin-top:8px"><div><label data-i18n="keyword">キーワード</label><input id="kw" type="text" placeholder="invoice"></div><div><label data-i18n="case">大小区別</label><select id="kwCase"><option value="ins">No</option><option value="sens">Yes</option></select></div></div>
-        <div class="row" style="margin-top:10px"><button class="btn" id="kwExtract" data-i18n="btn_run">実行</button></div>
-      </div></section>
-
-      <section class="card"><h2 data-i18n="text_h">埋め込みテキスト → TXT</h2><div class="body">
-        <label>PDF</label><input id="txtFile" type="file" accept="application/pdf" />
-        <div class="row" style="margin-top:10px"><button class="btn" id="txtExport" data-i18n="btn_export">書き出し</button></div>
-      </div></section>
-
-      <section class="card"><h2 data-i18n="seal_h">暗号学的シール（ES256 QR・実験）</h2><div class="body">
-        <label>PDF</label><input id="sealPdf" type="file" accept="application/pdf" />
-        <div class="row" style="margin-top:8px"><div><label data-i18n="place">ページ</label><input id="sealPage" type="number" min="1" value="1"></div><div><label data-i18n="qr_size">QRサイズ</label><input id="sealSize" type="number" min="96" step="16" value="160"></div></div>
-        <div class="row" style="margin-top:10px"><button class="btn" id="sealCreate" data-i18n="btn_create">作成</button><button class="btn" id="sealScan" data-i18n="scan_qr">QR読み取り</button></div>
-        <p class="note" data-i18n="seal_note">これはPAdES互換の「電子署名」ではなく、ブラウザで検証できる暗号学的シールです。<a href="/verify.html">verify.html</a> でも検証可能。</p>
-      </div></section>
-
-      <section class="card"><h2>Log</h2><div class="body"><div id="log" class="log">Ready.</div></div></section>
-    </div>
-    <div class="ad"></div>
-    <div class="footer"><span class="note">© 2025 Simple PDF Tools Neo</span></div>
+    <!-- ★既存のツールUI（カード群）がある場合はこのdivの中に置いてください -->
+    <section id="tools" class="grid">
+      <!-- ここに既存の「結合/分割/圧縮…」などのカード群をそのまま貼り付け可能 -->
+      <!-- 既存の index.html を置き換える場合は、この #tools セクションに旧カード群をコピーしてください。 -->
+    </section>
   </div>
 
-  <div id="toast" class="toast"></div>
+  <!-- ====== コンテンツ：ここから 600〜1000字以上 ====== -->
+  <div class="content">
+    <main class="wrap">
+      <h2 id="howto">使い方（3分クイックスタート）</h2>
+      <p>本サービスは、すべての処理がブラウザ内で完結するPDFユーティリティです。サーバーへファイルがアップロードされないため、機密資料でも安心してお使いいただけます。基本操作はシンプルで、目的のカードにファイルをドラッグ＆ドロップするだけ。結合・分割・ページ並べ替え・回転・ウォーターマーク・画像⇄PDF・OCRといった日常的なニーズを、ひとつの画面で横断的に解決します。圧縮はスキャンPDFで特に効果的で、解像度と画質スライダを調整することで用途に応じたサイズ最適化が可能です。画像→PDFではEXIF自動回転により、スマホ撮影の縦横が崩れる心配もありません。さらに、暗号学的シール（ES256署名のQR）を付与すれば、配布先で改ざん検知が可能です。検証は <code>verify.html</code> を開いてPDFとシールJSONを読み込むだけ。PWA対応のため、インストールすればオフラインでも主要機能が使え、会議室や移動中でも作業が止まりません。</p>
+      <p>操作の流れは共通です。①対象PDF/画像を選ぶ → ②オプション（ページ範囲・画質・サイズ等）を調整 → ③「作成/保存」を押す → ④自動ダウンロード。重たい処理はページ数を絞るか、複数回に分けるのがコツです。法人用途では、フォーム平坦化やウォーターマーク、しおり（目次）抽出などを組み合わせるとワークフロー短縮に寄与します。万一エラーが出た場合は、ファイルが壊れていないか、暗号化されていないかをご確認ください。</p>
 
-  <script src="/assets/app.js"></script>
+      <!-- safe ad placement after ~400+ words -->
+      <div class="ad-block">
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center; margin:24px auto;"
+             data-ad-client="ca-pub-8261009874978401"
+             data-ad-slot="REPLACE_WITH_SLOT_ID_2"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
+
+      <h2 id="usecases">ユースケース（ブログ / EC / レポート）</h2>
+      <ul>
+        <li><strong>ブログ運営</strong>：記事用の画像を一括でPDFにまとめて校正、WebP変換済み画像で軽量なレポートPDFを作成。OCRで引用メモ作りもスムーズ。</li>
+        <li><strong>EC担当</strong>：商品画像から納品用PDF、検品チェックシート、サイズ表の一体化。透かしを入れて共有すれば、意図しない二次利用の抑制にも。</li>
+        <li><strong>学生・研究室</strong>：講義スライドの分割配布、手書きノートのスキャンPDF圧縮、実験写真をEXIF方向を保ったままレポートに統合。</li>
+        <li><strong>バックオフィス</strong>：受発注書の結合、フォームの平坦化、ページ回転の揃え直し、目次の抽出と分割で後工程の入力作業を短縮。</li>
+        <li><strong>制作・営業</strong>：提案書を複数PDFから即時結合、最後に暗号学的シールで改ざん検知性を付与し、検証リンク（verify.html）をクライアントに案内。</li>
+      </ul>
+
+      <h2 id="faq">よくある質問</h2>
+      <div class="faq">
+        <details><summary>ファイルはアップロードされますか？</summary><p>いいえ。処理はブラウザ内（ローカル）で完結し、サーバーへ送信しません。</p></details>
+        <details><summary>無料で制限はありますか？</summary><p>基本機能は無料で利用できます。広告により運営されています。大容量ファイルは端末性能に依存します。</p></details>
+        <details><summary>電子署名（PAdES）と同じですか？</summary><p>本サービスの「暗号学的シール」はブラウザ検証型の改ざん検知で、PAdESとは異なります。PAdESが必要な場合は将来的に別途対応を検討しています。</p></details>
+        <details><summary>オフラインでも使えますか？</summary><p>PWAをインストールすると、主要機能をオフラインで使えます。初回アクセス時に必要なファイルをキャッシュします。</p></details>
+      </div>
+
+      <h2 id="policy">ご利用上の注意</h2>
+      <p>法令・契約・社内規程に従い、公開・配布の前に内容をご確認ください。第三者の著作物や個人情報が含まれる場合は適切な権利処理・匿名化を行ってください。業務・申請で<strong>原本性</strong>が求められる書類には、提出側のガイドラインに従い、必要に応じて正式な電子署名（PAdES）やタイムスタンプの付与をご検討ください。ブラウザ処理の特性上、端末メモリ不足で失敗することがあります。大容量は分割処理・解像度調整をご活用ください。</p>
+
+      <h2 id="contact">お問い合わせ</h2>
+      <p>ご意見・不具合報告・業務導入のご相談は、<a href="/contact.html">お問い合わせページ</a>からご連絡ください。個別のファイル内容にはアクセスできないため、具体例を示す場合はサンプルデータをご用意ください。</p>
+      <p class="note">最終更新日：2025-08-31</p>
+    </main>
+  </div>
+  <!-- ====== コンテンツ：ここまで ====== -->
+
+  <div class="footer">
+    <p><a href="/terms.html">利用規約</a>・<a href="/privacy.html">プライバシーポリシー</a>・<a href="/contact.html">お問い合わせ</a></p>
+    <p class="note">© 2025 Simple PDF Tools Neo — オフライン対応 / 100%ブラウザ内処理</p>
+  </div>
+
+  <!-- FAQ構造化データ -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"ファイルはアップロードされますか？","acceptedAnswer":{"@type":"Answer","text":"いいえ。処理はブラウザ内で完結し、サーバーへ送信しません。"}},
+      {"@type":"Question","name":"無料で制限はありますか？","acceptedAnswer":{"@type":"Answer","text":"基本機能は無料です。大容量は端末性能に依存し、広告により運営されています。"}},
+      {"@type":"Question","name":"電子署名（PAdES）と同じですか？","acceptedAnswer":{"@type":"Answer","text":"本サービスの「暗号学的シール」はブラウザ検証型の改ざん検知であり、PAdESとは異なります。"}},
+      {"@type":"Question","name":"オフラインでも使えますか？","acceptedAnswer":{"@type":"Answer","text":"PWAをインストールすれば主要機能はオフラインでも使用できます。"}}
+    ]
+  }
+  </script>
 </body>
 </html>
