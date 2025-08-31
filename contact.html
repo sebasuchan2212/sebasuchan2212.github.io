@@ -1,35 +1,25 @@
-<!doctype html>
-<html lang="ja">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>お問い合わせ｜かんたんPDFツール Neo</title>
-  <meta name="description" content="お問い合わせ"/>
-  <link rel="canonical" href="https://sebasuchan2212.github.io/contact.html"/>
-  <style>
-    :root{--bg:#0b1020;--text:#e8ecff;--muted:#9aa4c7;--line:#1b254d;--accent:#0ea5e9}
-    body{background:var(--bg);color:var(--text);font-family:system-ui}
-    main{max-width:900px;margin:40px auto;padding:0 16px;line-height:1.9}
-    a{color:var(--accent)}
-    form{background:#121933;border:1px solid var(--line);border-radius:12px;padding:16px}
-    input,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2a366b;background:#0d1430;color:#e8ecff;margin:6px 0}
-    button{padding:10px 14px;border-radius:10px;border:1px solid #2a366b;background:#192655;color:#fff;cursor:pointer}
-    .note{color:var(--muted);font-size:12px}
-  </style>
-</head>
-<body><main class="doc">
-  <h1>お問い合わせ</h1>
-  <p>ご意見・ご要望・不具合報告は以下のフォームまたはメールでお知らせください。</p>
-  <p>メール: <a href="mailto:contact@example.com">contact@example.com</a>（実運用時に差し替え）</p>
-  <form action="mailto:contact@example.com" method="post" enctype="text/plain">
-    <label>お名前</label>
-    <input name="name" required/>
-    <label>メールアドレス</label>
-    <input type="email" name="email" required/>
-    <label>お問い合わせ内容</label>
-    <textarea name="message" rows="6" required></textarea>
-    <button type="submit">メールで送信</button>
-  </form>
-  <p class="note">※ GitHub Pages ではサーバー側処理が使えないため、簡易的に mailto を利用しています。業務利用では外部フォームや専用バックエンドをご検討ください。</p>
-  <p><a href="/">← トップへ戻る</a></p>
+<!doctype html><html lang="ja"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>お問い合わせ｜かんたんPDFツール Neo</title>
+<style>
+:root{--bg:#0b1020;--text:#e8ecff;--muted:#9aa4c7;--line:#1b254d;--accent:#0ea5e9}
+body{background:var(--bg);color:var(--text);font-family:system-ui}
+main{max-width:900px;margin:40px auto;padding:0 16px;line-height:1.9}
+a{color:var(--accent)}form{background:#121933;border:1px solid var(--line);border-radius:12px;padding:16px}
+input,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2a366b;background:#0d1430;color:#e8ecff;margin:6px 0}
+button{padding:10px 14px;border-radius:10px;border:1px solid #2a366b;background:#192655;color:#fff;cursor:pointer}
+.note{color:var(--muted);font-size:12px}
+</style>
+</head><body><main class="doc">
+<h1>お問い合わせ</h1>
+<p>ご意見・不具合は以下のフォームまたはメールでご連絡ください。</p>
+<p>メール: <a href="mailto:contact@example.com">contact@example.com</a>（差し替え推奨）</p>
+<form action="mailto:contact@example.com" method="post" enctype="text/plain">
+<label>お名前</label><input name="name" required/>
+<label>メール</label><input type="email" name="email" required/>
+<label>内容</label><textarea name="message" rows="6" required></textarea>
+<button type="submit">メールで送信</button>
+</form>
+<p class="note">※ サーバー機能がないため簡易的に mailto 送信です。業務用途は外部フォーム等をご検討ください。</p>
+<p><a href="/">← トップへ戻る</a></p>
 </main></body></html>
