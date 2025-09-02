@@ -1,7 +1,7 @@
-/*! pdftools-hotfix.js — event delegation + self-test (2025-09-02) */
+/*! pdftools-hotfix.js v2 — add CLEAR support + delegation + self-test (2025-09-02) */
 (function(){
-  if (window.__PDFTOOLS_HOTFIX__) return;
-  window.__PDFTOOLS_HOTFIX__ = true;
+  if (window.__PDFTOOLS_HOTFIX_V2__) return;
+  window.__PDFTOOLS_HOTFIX_V2__ = true;
 
   const $ = (s)=>document.querySelector(s);
   const logEl = $('#log');
@@ -47,8 +47,7 @@
   }
 
   async function doMerge(){
-    const input = document.getElementById('mergeFiles');
-    const files = Array.from(input?.files||[]);
+    const files = Array.from($('#mergeFiles')?.files||[]);
     if (!files.length) return alert('PDFを選択してください');
     const outPdf = await PDFLib.PDFDocument.create();
     for (const f of files){
@@ -64,14 +63,12 @@
     log('Merge: 完了 merged.pdf');
   }
   async function doSplit(){
-    const input = document.getElementById('splitFile');
-    const ranges = document.getElementById('splitRanges');
-    const file = input?.files?.[0];
+    const file = $('#splitFile')?.files?.[0];
     if (!file) return alert('PDFを選択してください');
     const buf = await fileToArrayBuffer(file);
     const src = await PDFLib.PDFDocument.load(buf);
     const total = src.getPageCount();
-    const pages = parseRanges(ranges?.value, total);
+    const pages = parseRanges($('#splitRanges')?.value, total);
     if (!pages.length) return alert('正しいページ範囲を入力してください');
     let idx=1;
     for (const n of pages){
@@ -85,11 +82,10 @@
     log('Split: 保存完了');
   }
   async function doCompress(){
-    const input = document.getElementById('compressFile');
-    const file = input?.files?.[0];
+    const file = $('#compressFile')?.files?.[0];
     if (!file) return alert('PDFを選択してください');
-    const q = Number(document.getElementById('quality')?.value || 0.7);
-    const sc = Number(document.getElementById('scale')?.value || 0.8);
+    const q = Number($('#quality')?.value || 0.7);
+    const sc = Number($('#scale')?.value || 0.8);
     const buf = await fileToArrayBuffer(file);
     const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
     const { jsPDF } = window.jspdf;
@@ -128,11 +124,10 @@
     return canvas;
   }
   async function doImg2Pdf(){
-    const input = document.getElementById('imgFiles');
-    const files = Array.from(input?.files||[]);
+    const files = Array.from($('#imgFiles')?.files||[]);
     if (!files.length) return alert('画像を選択してください');
-    const sel = document.getElementById('pageSize')?.value || 'fit';
-    const marginMm = Number(document.getElementById('marginMm')?.value || 10);
+    const sel = $('#pageSize')?.value || 'fit';
+    const marginMm = Number($('#marginMm')?.value || 10);
     const mm2pt = (mm)=> mm * 72 / 25.4;
     const a4p = [595.28, 841.89], a4l = [841.89, 595.28];
     const { jsPDF } = window.jspdf;
@@ -158,11 +153,11 @@
     log('Images→PDF: 完了 images.pdf');
   }
   async function doPdf2Img(){
-    const f = document.getElementById('p2iFile')?.files?.[0];
+    const f = $('#p2iFile')?.files?.[0];
     if (!f) return alert('PDFを選択');
-    const ranges = document.getElementById('p2iRanges')?.value || '';
-    const type = document.getElementById('p2iType')?.value || 'image/png';
-    const scale = Math.max(1, Math.min(3, parseFloat(document.getElementById('p2iScale')?.value || '2')));
+    const ranges = $('#p2iRanges')?.value || '';
+    const type = $('#p2iType')?.value || 'image/png';
+    const scale = Math.max(1, Math.min(3, parseFloat($('#p2iScale')?.value || '2')));
     const buf = await fileToArrayBuffer(f);
     const pdf = await pdfjsLib.getDocument({data:buf}).promise;
     const total = pdf.numPages;
@@ -184,18 +179,64 @@
     log('PDF→画像: ZIP保存');
   }
 
+  function resetRangesDisplays(){
+    const q = $('#quality'); const s = $('#scale');
+    if (q && $('#qVal')) $('#qVal').textContent = Number(q.value||q.getAttribute('value')||0.7).toFixed(2);
+    if (s && $('#sVal')) $('#sVal').textContent = Number(s.value||s.getAttribute('value')||0.8).toFixed(2);
+  }
+  function clearMerge(){ const el=$('#mergeFiles'); if(el) el.value=''; log('Merge: 入力クリア'); }
+  function clearSplit(){ const a=$('#splitFile'); const b=$('#splitRanges'); if(a) a.value=''; if(b) b.value=''; log('Split: 入力クリア'); }
+  function clearCompress(){ const a=$('#compressFile'); if(a) a.value=''; resetRangesDisplays(); log('Compress: 入力クリア'); }
+  function clearImg(){ const a=$('#imgFiles'); if(a) a.value=''; log('Images→PDF: 入力クリア'); }
+  function clearP2i(){ const a=$('#p2iFile'); const b=$('#p2iRanges'); if(a) a.value=''; if(b) b.value=''; log('PDF→画像: 入力クリア'); }
+  function clearEdit(){ const a=$('#editFile'); if(a) a.value=''; const t=$('#thumbs'); if(t) t.innerHTML=''; log('Edit: 入力クリア'); }
+  function clearWm(){
+    const ids = ['wmFile','wmText','wmImage','metaTitle','metaAuthor'];
+    ids.forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+    const alpha=$('#wmAlpha'); if(alpha) alpha.value='0.12';
+    const scale=$('#wmScale'); if(scale) scale.value='0.6';
+    log('WM: 入力クリア');
+  }
+  function clearOcr(){ const a=$('#ocrFile'); if(a) a.value=''; const p=$('#ocrPages'); if(p) p.value='3'; log('OCR: 入力クリア'); }
+
+  function clearGeneric(btn){
+    const card = btn.closest('.card') || btn.closest('.body') || document;
+    card.querySelectorAll('input[type="file"]').forEach(el=> el.value='');
+    card.querySelectorAll('input[type="text"]').forEach(el=> el.value='');
+    card.querySelectorAll('textarea').forEach(el=> el.value='');
+    card.querySelectorAll('input[type="number"]').forEach(el=> {
+      if (el.id==='ocrPages') el.value='3';
+      else if (el.id==='wmAlpha') el.value='0.12';
+      else if (el.id==='wmScale') el.value='0.6';
+      else el.value='';
+    });
+    card.querySelectorAll('input[type="range"]').forEach(el=> {
+      const def = el.getAttribute('value');
+      if (def!=null) el.value = def;
+    });
+    const thumbs = card.querySelector('#thumbs'); if (thumbs) thumbs.innerHTML='';
+    resetRangesDisplays();
+  }
+
   document.addEventListener('click', async (e)=>{
-    const t = e.target;
-    const id = (el)=> el && el.id;
-    const map = { mergeBtn: doMerge, splitBtn: doSplit, compressBtn: doCompress, img2pdfBtn: doImg2Pdf, p2iBtn: doPdf2Img };
-    let btn = t.closest && t.closest('button, [role="button"]');
+    const btn = e.target.closest && e.target.closest('button, [role="button"]');
     if (!btn) return;
-    const action = map[id(btn)];
-    if (action){
+    const id = btn.id || '';
+    const map = {
+      mergeBtn: doMerge, splitBtn: doSplit, compressBtn: doCompress, img2pdfBtn: doImg2Pdf, p2iBtn: doPdf2Img,
+      clearMerge: clearMerge, clearSplit: clearSplit, clearCompress: clearCompress, clearImg: clearImg, clearP2i: clearP2i,
+      clearEdit: clearEdit, clearWm: clearWm, clearOcr: clearOcr
+    };
+    const fn = map[id];
+    if (fn){
       e.preventDefault(); e.stopPropagation();
-      try{ await action(); }catch(err){ console.error(err); alert("処理中にエラー: " + (err && err.message || err)); }
+      try{ await fn(); }catch(err){ console.error(err); alert("処理中にエラー: " + (err && err.message || err)); }
+    } else if (id.startsWith('clear')){
+      e.preventDefault(); e.stopPropagation();
+      clearGeneric(btn);
+      log('Clear: 入力クリア（汎用）');
     }
   }, true);
 
-  log("hotfix loaded");
+  log("hotfix v2 loaded");
 })();
