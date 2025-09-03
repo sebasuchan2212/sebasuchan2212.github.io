@@ -1,11 +1,12 @@
-/* service-worker.js */
-const CACHE_VERSION = 'v2025.09.03.3';
+/* service-worker.js — add lang-switch to precache */
+const CACHE_VERSION = 'v2025.09.03.4';
 const STATIC_CACHE = `pdftools-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `pdftools-runtime-${CACHE_VERSION}`;
 
 const APP_SHELL = [
   '/', '/index.html', '/offline.html',
-  '/manifest.json', '/app-core.js', '/hotfix.js'
+  '/manifest.json', '/app-core.js', '/hotfix.js', '/lang-switch.js',
+  '/en/', '/es/'
 ];
 
 self.addEventListener('install', (event) => {
@@ -35,7 +36,6 @@ self.addEventListener('fetch', (event)=>{
     })());
     return;
   }
-  // static
   if (url.origin === self.location.origin && url.pathname.match(/\.(?:js|css|png|ico|svg)$/)) {
     event.respondWith((async()=>{
       const cache = await caches.open(STATIC_CACHE);
@@ -44,7 +44,6 @@ self.addEventListener('fetch', (event)=>{
     })());
     return;
   }
-  // default: network falling back to cache
   event.respondWith((async()=>{
     try { const res = await fetch(req); const cache = await caches.open(RUNTIME_CACHE); cache.put(req,res.clone()); return res; }
     catch { return (await caches.match(req)) || (await caches.match('/offline.html')); }
