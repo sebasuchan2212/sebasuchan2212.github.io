@@ -12,6 +12,17 @@
   <link rel="alternate" hreflang="ja" href="https://sebasuchan2212.github.io/">
   <link rel="alternate" hreflang="en" href="https://sebasuchan2212.github.io/en/">
   <link rel="alternate" hreflang="es" href="https://sebasuchan2212.github.io/es/">
+  <link rel="manifest" href="/manifest.json">
+  <script src="/app-core.js" defer></script>
+  <script src="/hotfix.js" defer></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js').catch(()=>{});
+    });
+  }
+  </script>
+
   <meta property="og:type" content="website">
   <meta property="og:title" content="かんたんPDFツール Neo｜100%ブラウザ内処理・無料">
   <meta property="og:description" content="結合/分割/編集/圧縮/画像変換/OCRまで。データはアップロードされません。">
