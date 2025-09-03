@@ -1,11 +1,11 @@
 {
-  "name": "かんたんPDFツール Neo",
-  "short_name": "PDF Neo",
-  "start_url": ".",
+  "name": "Kantan PDF Tools Neo",
+  "short_name": "PDF Tools",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0b1020",
   "theme_color": "#0ea5e9",
-  "scope": ".",
   "icons": [
     {
       "src": "/icons/icon-192.png",
