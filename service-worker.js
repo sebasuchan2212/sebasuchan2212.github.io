@@ -1,5 +1,5 @@
-/* service-worker.js — add lang-switch to precache */
-const CACHE_VERSION = 'v2025.09.03.4';
+/* service-worker.js — bump cache for lang-switch v2 */
+const CACHE_VERSION = 'v2025.09.03.5';
 const STATIC_CACHE = `pdftools-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `pdftools-runtime-${CACHE_VERSION}`;
 
