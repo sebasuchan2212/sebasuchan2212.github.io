@@ -1,105 +1,132 @@
-/* lang-switch.js v2 — mobile-safe, no overlap, optional dropdown */
+/* lang-switch.js v3 — resilient switcher (Shadow DOM + fallback floating) */
 (function(){
-  try{
-    const urls = { ja: '/', en: '/en/', es: '/es/' };
+  const CONFIG = { urls: { ja:'/', en:'/en/', es:'/es/' } };
 
-    function detect(){
-      const p = location.pathname;
-      if (p.startsWith('/en/')) return 'en';
-      if (p.startsWith('/es/')) return 'es';
-      return 'ja';
+  function currentLang(){
+    const p = location.pathname;
+    if (p.startsWith('/en/')) return 'en';
+    if (p.startsWith('/es/')) return 'es';
+    return 'ja';
+  }
+
+  function styleText(mode){
+    // mode: 'header' or 'floating'
+    return `:host{all:initial}
+      .wrap{all:initial; font:12px/1 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+      .bar{display:flex; gap:8px; background:#0f1a2d; border:1px solid #1f2a44; border-radius:999px; padding:6px 8px; ${mode==='floating'?'position:fixed; top:12px; right:12px; z-index:2147483647;':''} }
+      .btn{appearance:none; border:1px solid #2a366b; background:#0d1430; color:#e8ecff; padding:6px 10px; border-radius:999px; cursor:pointer}
+      .btn.active{background:#14204b; color:#b8c2f2}
+      .toggle{display:none}
+      @media (max-width:640px){
+        .bar{${mode==='floating'?'top:8px; right:8px;':''}}
+      }
+      @media (max-width:420px){
+        .group{display:none; gap:6px}
+        .open .group{display:flex}
+        .toggle{display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:999px; border:1px solid #2a366b; background:#0d1430; color:#e8ecff}
+        .sr{position:absolute!important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
+      }`;
+  }
+
+  async function exists(path){
+    try{ const res = await fetch(path, { method:'HEAD', cache:'no-store' }); return res.ok; }
+    catch{ return false; }
+  }
+
+  function mount(){
+    if (document.getElementById('lang-switcher-host')) return;
+
+    // prefer header, else floating
+    const header = document.querySelector('header');
+    const mode = header ? 'header' : 'floating';
+
+    const host = document.createElement('div');
+    host.id = 'lang-switcher-host';
+    if (mode === 'header') {
+      // place at header start
+      header.insertBefore(host, header.firstChild);
+    } else {
+      document.body.appendChild(host);
     }
-    const cur = detect();
+    const root = host.attachShadow({ mode:'open' });
+    const style = document.createElement('style');
+    style.textContent = styleText(mode);
+    root.appendChild(style);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'wrap';
+    wrap.innerHTML = `
+      <div class="bar" role="navigation" aria-label="Language Switcher">
+        <button type="button" class="toggle" aria-expanded="false" aria-controls="lang-group" title="Language"><span class="sr">Language</span>🌐</button>
+        <div id="lang-group" class="group">
+          <button type="button" class="btn" data-lang="ja" aria-label="日本語">日本語</button>
+          <button type="button" class="btn" data-lang="en" aria-label="English">EN</button>
+          <button type="button" class="btn" data-lang="es" aria-label="Español">ES</button>
+        </div>
+      </div>`;
+    root.appendChild(wrap);
+
+    const cur = currentLang();
     const pref = localStorage.getItem('pref_lang') || cur;
 
-    // basic styles
-    const css = document.createElement('style');
-    css.textContent = `
-      header{position:relative}
-      #lang-switcher{position:absolute; top:12px; right:12px; display:flex; gap:8px; background:#0f1a2d; border:1px solid #1f2a44; border-radius:999px; padding:6px 8px; z-index:1001}
-      #lang-switcher button{appearance:none; border:1px solid #2a366b; background:#0d1430; color:#e8ecff; padding:6px 10px; border-radius:999px; cursor:pointer; font: 12px/1 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;}
-      #lang-switcher button.active{background:#14204b; color:#b8c2f2}
-      /* mobile: turn into a dropdown row above the title (no overlap) */
-      @media (max-width:640px){
-        #lang-switcher{position:relative; top:auto; right:auto; margin:0 0 8px auto;}
-      }
-      /* dropdown mode for very small screens */
-      @media (max-width:420px){
-        #lang-switcher{gap:0; padding:4px 6px}
-        #lang-switcher .group{display:none; gap:6px}
-        #lang-switcher.open .group{display:flex}
-        #lang-switcher .toggle{display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:999px; border:1px solid #2a366b; background:#0d1430; font-size:14px}
-        #lang-switcher .sr{position:absolute!important; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
-      }
-    `;
-    document.head.appendChild(css);
-
-    // check existence of locales (optional)
-    async function exists(path){
-      try{ const res = await fetch(path, { method:'HEAD', cache:'no-store' }); return res.ok; }
-      catch{ return false; }
-    }
-
-    const header = document.querySelector('header') || document.body;
-    const bar = document.createElement('div');
-    bar.id = 'lang-switcher';
-    bar.innerHTML = `
-      <button type="button" class="toggle" aria-expanded="false" aria-controls="lang-group" title="Language"><span class="sr">Language</span>🌐</button>
-      <div id="lang-group" class="group">
-        <button type="button" data-lang="ja" aria-label="日本語">日本語</button>
-        <button type="button" data-lang="en" aria-label="English">EN</button>
-        <button type="button" data-lang="es" aria-label="Español">ES</button>
-      </div>
-    `;
-    header.insertBefore(bar, header.firstChild);
-
-    // active state
-    [...bar.querySelectorAll('button[data-lang]')].forEach(btn => {
-      const l = btn.getAttribute('data-lang');
-      if (l === cur) btn.classList.add('active');
+    // set active
+    wrap.querySelectorAll('.btn[data-lang]').forEach(btn => {
+      if (btn.getAttribute('data-lang') === cur) btn.classList.add('active');
     });
 
-    // collapse/expand on tiny screens
-    const toggle = bar.querySelector('.toggle');
-    if (toggle){
-      toggle.addEventListener('click', ()=>{
-        const open = bar.classList.toggle('open');
-        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      });
-    }
+    // tiny-screen dropdown toggle
+    const bar = wrap.querySelector('.bar');
+    wrap.querySelector('.toggle').addEventListener('click', ()=>{
+      bar.classList.toggle('open');
+      const open = bar.classList.contains('open');
+      wrap.querySelector('.toggle').setAttribute('aria-expanded', open?'true':'false');
+    });
 
     // click handler
-    bar.addEventListener('click', (e)=>{
-      const b = e.target.closest('button[data-lang]'); if(!b) return;
+    wrap.addEventListener('click', (e)=>{
+      const b = e.target.closest('.btn[data-lang]'); if(!b) return;
       const lang = b.getAttribute('data-lang');
-      if (!lang || !urls[lang]) return;
+      if (!CONFIG.urls[lang]) return;
       if (lang === cur) return;
       localStorage.setItem('pref_lang', lang);
-      location.href = urls[lang];
+      location.href = CONFIG.urls[lang];
     });
 
-    // hide buttons for missing locales (non-blocking)
+    // hide buttons if missing
     (async()=>{
-      const targets = [['en','/en/'], ['es','/es/']];
-      for (const [code, path] of targets){
-        const ok = await exists(path);
+      for (const code of ['en','es']){
+        const ok = await exists(CONFIG.urls[code]);
         if (!ok){
-          const btn = bar.querySelector(`button[data-lang="${code}"]`);
+          const btn = wrap.querySelector(`.btn[data-lang="${code}"]`);
           if (btn) btn.style.display='none';
         }
       }
     })();
 
-    // optional initial redirect on "/" only
+    // optional first-visit redirect (on "/" only)
     try{
       if (cur === 'ja' && location.pathname === '/' && !sessionStorage.getItem('lang_redirect_done')){
         if (pref !== 'ja') {
-          sessionStorage.setItem('lang_redirect_done', '1');
-          location.replace(urls[pref]);
+          sessionStorage.setItem('lang_redirect_done','1');
+          location.replace(CONFIG.urls[pref]);
         }
       }
     }catch{}
 
-  }catch(e){ console.error('lang-switch v2 error', e); }
-})(); error', e); }
+    // self-heal: re-mount if host is removed
+    const mo = new MutationObserver(()=>{
+      if (!document.getElementById('lang-switcher-host')){
+        mo.disconnect();
+        setTimeout(mount, 0);
+      }
+    });
+    mo.observe(document.body, { childList:true, subtree:true });
+  }
+
+  // mount after parse
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', mount, { once:true });
+  } else {
+    mount();
+  }
 })();
