@@ -1,62 +1,369 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kantan PDF Tools Neo — Merge/Split/Compress/Image⇄PDF/OCR</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0ea5e9">
+
+<title>Simple PDF Tools Neo | 100% In-Browser & Free | Merge/Split/Compress/OCR/Image↔PDF/Edit</title>
+<meta name="description" content="All-in-browser PDF utilities: merge, split, page edit (reorder/delete/rotate), compress image-heavy PDFs, images→PDF (EXIF auto-rotate), PDF→images, OCR, watermark & metadata. No uploads, free."/>
 <link rel="canonical" href="https://sebasuchan2212.github.io/en/">
 <link rel="alternate" hreflang="ja" href="https://sebasuchan2212.github.io/">
+<link rel="alternate" hreflang="en" href="https://sebasuchan2212.github.io/en/">
 <link rel="alternate" hreflang="es" href="https://sebasuchan2212.github.io/es/">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#0ea5e9">
+
+<!-- AdSense -->
+<link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
+<link rel="preconnect" href="https://googleads.g.doubleclick.net" crossorigin>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8261009874978401" crossorigin="anonymous"></script>
 
 <style>
   :root { --bg:#0b1020; --card:#121933; --accent:#0ea5e9; --text:#e8ecff; --muted:#9aa4c7; --line:#1b254d; }
-  *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-  a{color:#8be9fd;text-decoration:none}
-  header{padding:24px 16px;text-align:center;border-bottom:1px solid var(--line)}
-  header h1{margin:0;font-size:clamp(20px,3vw,28px)} header p{margin:.5rem 0 0;color:var(--muted)}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans",sans-serif}
+  a{color:var(--accent);text-decoration:none}
+  header{padding:28px 16px;text-align:center;border-bottom:1px solid var(--line)}
+  header h1{margin:0;font-size:clamp(22px,3.2vw,34px)}
+  header p{margin:.5rem 0 0;color:var(--muted)}
+  nav.top{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line)}
+  nav.top a{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#0f1a3f;color:#dfe7ff}
   .wrap{max-width:1200px;margin:0 auto;padding:16px}
   .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
   .card{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.25)}
-  .card h2{margin:0;padding:16px 16px 0;font-size:18px}.card .body{padding:16px}
+  .card h2{margin:0;padding:16px 16px 0;font-size:18px}
+  .card .body{padding:16px}
   label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   input[type="file"],input[type="text"],select,button,input[type="number"],input[type="range"],textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #2a366b;background:#0d1430;color:var(--text)}
   input::file-selector-button{padding:8px 10px;border-radius:8px;border:1px solid #2a366b;background:#0f1a3f;color:var(--text);margin-right:8px}
-  .row{display:flex;gap:10px;align-items:center}.row>*{flex:1}
-  .btn{cursor:pointer;background:linear-gradient(180deg,#243a73,#192655);border:1px solid #2a366b}.btn:hover{filter:brightness(1.08)}
+  .row{display:flex;gap:10px;align-items:center}
+  .row>*{flex:1}
+  .btn{cursor:pointer;background:linear-gradient(180deg,#243a73,#192655);border:1px solid #2a366b}
+  .btn:hover{filter:brightness(1.08)}
+  .note{font-size:12px;color:var(--muted)}
+  .footer{padding:16px;text-align:center;color:var(--muted);border-top:1px solid var(--line);margin-top:30px}
+  .pill{display:inline-block;padding:2px 8px;margin-left:6px;border-radius:999px;background:#14204b;color:#b8c2f2;font-size:11px;border:1px solid #27357a}
   .log{white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;background:#0d1430;border:1px solid #2a366b;color:#bfe2ff;border-radius:12px;padding:10px;max-height:160px;overflow:auto}
   .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-top:10px}
   .thumb{background:#0d1430;border:1px solid #2a366b;border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:6px}
+  .thumb[draggable="true"]{cursor:grab}
   .thumb .canvas{background:#0b1020;border:1px solid #2a366b;border-radius:8px;display:flex;align-items:center;justify-content:center;min-height:120px}
-  .btns{display:flex;gap:6px;flex-wrap:wrap}.danger{background:#401a1a;border-color:#6b2222}.tag{font-size:11px;color:#9fb3d9}.hiddenPage{opacity:.4;filter:grayscale(1)}
+  .btns{display:flex;gap:6px;flex-wrap:wrap}
+  .danger{background:#401a1a;border-color:#6b2222}
+  .tag{font-size:11px;color:#9fb3d9}
+  .hiddenPage{opacity:.4;filter:grayscale(1)}
+  .ad-block{margin:24px auto;text-align:center}
+  .content main{max-width:920px;margin:0 auto;line-height:1.9}
+  .content h2{margin-top:28px;border-left:4px solid var(--accent);padding-left:10px}
+  details{background:#0d1430;border-radius:12px;border:1px dashed #33407a;padding:10px 12px}
+  summary{cursor:pointer}
+  .lang-switch{position:fixed;right:12px;top:12px;z-index:1000;display:flex;gap:6px}
+  .lang-switch a{padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:#0f1a3f;color:#dfe7ff;font-size:12px}
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.min.js"></script>
-<script>pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.min.js";</script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/full.umd.js"></script>
-<script src="/lang-switch.js" defer></script>
+<!-- Vendors -->
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.min.js" defer></script>
+<script>document.addEventListener('DOMContentLoaded',()=>{ if(window.pdfjsLib){ pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.min.js"; }});</script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/full.umd.js" defer></script>
+
+<script src="/assets.adsafe.js" defer></script>
+<script src="/app-core.js?v=2025-09-10.3" defer></script>
+
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=> navigator.serviceWorker.register('/service-worker.js').catch(()=>{}));
+}
+</script>
 </head>
 <body>
-<header><h1>Kantan PDF Tools Neo <span class="pill">100% in-browser</span> <span class="pill">Free</span></h1>
-<p>Merge / Split / Edit / Compress / Image⇄PDF / OCR — all local.</p></header>
-<div class="wrap"><div class="grid">
-<section class="card"><h2>Merge PDFs</h2><div class="body"><label>Select PDFs</label><input id="mergeFiles" type="file" accept="application/pdf" multiple>
-<div class="row" style="margin-top:10px"><button class="btn" id="mergeBtn">Create merged PDF</button><button class="btn" id="clearMerge">Clear</button></div></div></section>
-<section class="card"><h2>Split PDF</h2><div class="body"><label>PDF</label><input id="splitFile" type="file" accept="application/pdf"><label style="margin-top:8px">Ranges</label><input id="splitRanges" type="text" placeholder="1-3,5,8-">
-<div class="row" style="margin-top:10px"><button class="btn" id="splitBtn">Export pages</button><button class="btn" id="clearSplit">Clear</button></div></div></section>
-<section class="card"><h2>Compress</h2><div class="body"><label>PDF</label><input id="compressFile" type="file" accept="application/pdf"><div class="row" style="margin-top:8px"><div>
-<label>JPEG quality</label><input id="quality" type="range" min="0.3" max="0.95" step="0.05" value="0.7"><div class="note">Now: <span id="qVal">0.70</span></div></div><div><label>Scale</label><input id="scale" type="range" min="0.5" max="1" step="0.05" value="0.8"><div class="note">Now: <span id="sVal">0.80</span></div></div></div>
-<div class="row" style="margin-top:10px"><button class="btn" id="compressBtn">Export</button><button class="btn" id="clearCompress">Clear</button></div></div></section>
-<section class="card"><h2>Images → PDF (EXIF)</h2><div class="body"><label>Images</label><input id="imgFiles" type="file" accept="image/*" multiple>
-<div class="row" style="margin-top:8px"><div><label>Page size</label><select id="pageSize"><option value="fit">Fit</option><option value="a4p">A4 Portrait</option><option value="a4l">A4 Landscape</option></select></div><div><label>Margin</label><input id="marginMm" type="number" min="0" max="50" step="1" value="10"></div></div>
-<div class="row" style="margin-top:10px"><button class="btn" id="img2pdfBtn">Create PDF</button><button class="btn" id="clearImg">Clear</button></div></div></section>
-<section class="card"><h2>Page editor</h2><div class="body"><label>PDF</label><input id="editFile" type="file" accept="application/pdf"><div id="thumbs" class="thumbs"></div>
-<div class="row" style="margin-top:10px"><button class="btn" id="applyEditBtn">Apply & Save</button><button class="btn" id="clearEdit">Clear</button></div></div></section>
-<section class="card"><h2>PDF → Images</h2><div class="body"><label>PDF</label><input id="p2iFile" type="file" accept="application/pdf"><div class="row" style="margin-top:8px"><div><label>Pages</label><input id="p2iRanges" type="text"></div><div><label>Format</label><select id="p2iType"><option value="image/png">PNG</option><option value="image/jpeg">JPEG</option></select></div><div><label>Scale</label><input id="p2iScale" type="number" min="1" max="3" step="0.5" value="2"></div></div>
-<div class="row" style="margin-top:10px"><button class="btn" id="p2iBtn">Export ZIP</button><button class="btn" id="clearP2i">Clear</button></div></div></section>
-<section class="card"><h2>OCR</h2><div class="body"><label>PDF</label><input id="ocrFile" type="file" accept="application/pdf"><div class="row" style="margin-top:8px"><div><label>Lang</label><select id="ocrLang"><option value="eng">English</option><option value="jpn">日本語</option></select></div><div><label>N pages</label><input id="ocrPages" type="number" min="1" step="1" value="3"></div></div>
-<div class="row" style="margin-top:10px"><button class="btn" id="ocrBtn">Run OCR</button><button class="btn" id="clearOcr">Clear</button></div><div style="margin-top:8px"><label>Log</label><div id="log" class="log">Ready.</div></div></div></section>
-</div></div>
-<script src="/app-core.js" defer></script><script src="/hotfix.js" defer></script>
-</body></html>
+  <div class="lang-switch" aria-label="language switch">
+    <a href="/">日本語</a>
+    <a href="/en/">English</a>
+    <a href="/es/">Español</a>
+  </div>
+
+  <header>
+    <h1>Simple PDF Tools Neo <span class="pill">100% In-Browser</span> <span class="pill">Free</span></h1>
+    <p><strong>Merge, Split, Page Edit (Reorder/Delete/Rotate), Compress (image-heavy), Images⇄PDF, PDF→Images, OCR, Watermark</strong> — all locally in your browser.</p>
+  </header>
+
+  <nav class="top">
+    <a href="#howto">How to Use</a>
+    <a href="#usecases">Use Cases</a>
+    <a href="#faq">FAQ</a>
+    <a href="#policy">Notes</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <div class="wrap">
+    <div class="ad-block">
+      <ins class="adsbygoogle"
+           style="display:block;margin:16px 0"
+           data-ad-client="ca-pub-8261009874978401"
+           data-ad-slot="REPLACE_WITH_SLOT_ID_1"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+    </div>
+
+    <div id="tools" class="grid">
+      <!-- Merge -->
+      <section class="card">
+        <h2>Merge PDFs</h2>
+        <div class="body">
+          <label>Select multiple PDFs (merged in selected order)</label>
+          <input id="mergeFiles" type="file" accept="application/pdf" multiple />
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="mergeBtn">Create Merged PDF</button>
+            <button class="btn" id="clearMerge">Clear</button>
+          </div>
+          <p class="note">Tip: Multi-select with drag & drop.</p>
+        </div>
+      </section>
+
+      <!-- Split -->
+      <section class="card">
+        <h2>Split PDF</h2>
+        <div class="body">
+          <label>PDF to split</label>
+          <input id="splitFile" type="file" accept="application/pdf" />
+          <label style="margin-top:8px">Page ranges (e.g. <span class="pill">1-3,5,8-9,7-</span>)</label>
+          <input id="splitRanges" type="text" placeholder="1-3,5,8-9" />
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="splitBtn">Export as individual files</button>
+            <button class="btn" id="clearSplit">Clear</button>
+          </div>
+          <p class="note">1-based. <code>7-</code> means “to the last page”. Duplicates/out-of-range are ignored.</p>
+        </div>
+      </section>
+
+      <!-- Compress -->
+      <section class="card">
+        <h2>Compress (Image-Heavy PDFs)</h2>
+        <div class="body">
+          <label>Target PDF (best for scans/photos)</label>
+          <input id="compressFile" type="file" accept="application/pdf" />
+          <div class="row" style="margin-top:8px">
+            <div>
+              <label>JPEG quality (0.3–0.95)</label>
+              <input id="quality" type="range" min="0.3" max="0.95" step="0.05" value="0.7" />
+              <div class="note">Now: <span id="qVal">0.70</span></div>
+            </div>
+            <div>
+              <label>Scale (50%–100%)</label>
+              <input id="scale" type="range" min="0.5" max="1" step="0.05" value="0.8" />
+              <div class="note">Now: <span id="sVal">0.80</span></div>
+            </div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="compressBtn">Export Compressed PDF</button>
+            <button class="btn" id="clearCompress">Clear</button>
+          </div>
+          <p class="note">Not ideal for text-heavy PDFs (they become images). For submissions, try quality ≥0.8, scale ≥0.9.</p>
+        </div>
+      </section>
+
+      <!-- Images to PDF -->
+      <section class="card">
+        <h2>Images → PDF (EXIF Auto-Rotate)</h2>
+        <div class="body">
+          <label>Pick images (JPG/PNG/WebP)</label>
+          <input id="imgFiles" type="file" accept="image/*" multiple />
+          <div class="row" style="margin-top:8px">
+            <div>
+              <label>Page size</label>
+              <select id="pageSize">
+                <option value="fit">Fit to image</option>
+                <option value="a4p">A4 Portrait</option>
+                <option value="a4l">A4 Landscape</option>
+              </select>
+            </div>
+            <div>
+              <label>Margin (mm)</label>
+              <input id="marginMm" type="number" min="0" max="50" step="1" value="10" />
+            </div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="img2pdfBtn">Create PDF</button>
+            <button class="btn" id="clearImg">Clear</button>
+          </div>
+          <p class="note">EXIF is read to keep smartphone orientation correct.</p>
+        </div>
+      </section>
+
+      <!-- Editor -->
+      <section class="card">
+        <h2>Page Editor (Reorder / Delete / Rotate)</h2>
+        <div class="body">
+          <label>PDF to edit</label>
+          <input id="editFile" type="file" accept="application/pdf" />
+          <div id="thumbs" class="thumbs"></div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="applyEditBtn">Apply & Save</button>
+            <button class="btn" id="clearEdit">Clear</button>
+          </div>
+          <p class="note">Drag thumbnails to reorder. Toggle “hide” to delete. Rotate is 90° steps.</p>
+        </div>
+      </section>
+
+      <!-- Watermark -->
+      <section class="card">
+        <h2>Watermark & Metadata</h2>
+        <div class="body">
+          <label>Target PDF</label>
+          <input id="wmFile" type="file" accept="application/pdf" />
+          <div class="row" style="margin-top:8px">
+            <div>
+              <label>Text WM</label>
+              <input id="wmText" type="text" placeholder="e.g. © YourSite">
+            </div>
+            <div>
+              <label>Opacity (0.05–0.5)</label>
+              <input id="wmAlpha" type="number" min="0.05" max="0.5" step="0.01" value="0.12">
+            </div>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <div>
+              <label>Image WM (PNG/JPEG)</label>
+              <input id="wmImage" type="file" accept="image/png,image/jpeg">
+            </div>
+            <div>
+              <label>Scale (0.2–1.0)</label>
+              <input id="wmScale" type="number" min="0.2" max="1" step="0.1" value="0.6">
+            </div>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <div><label>Title</label><input id="metaTitle" type="text" placeholder="optional"></div>
+            <div><label>Author</label><input id="metaAuthor" type="text" placeholder="optional"></div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="applyWmBtn">Apply & Save</button>
+            <button class="btn" id="clearWm">Clear</button>
+          </div>
+          <p class="note">Text WM is rendered to PNG before placed. If an image WM is given, it takes precedence.</p>
+        </div>
+      </section>
+
+      <!-- PDF → Images -->
+      <section class="card">
+        <h2>PDF → Images (PNG/JPEG · ZIP)</h2>
+        <div class="body">
+          <label>Target PDF</label>
+          <input id="p2iFile" type="file" accept="application/pdf" />
+          <div class="row" style="margin-top:8px">
+            <div><label>Page ranges</label><input id="p2iRanges" type="text" placeholder="e.g. 1-3,5"></div>
+            <div>
+              <label>Format</label>
+              <select id="p2iType">
+                <option value="image/png">PNG</option>
+                <option value="image/jpeg">JPEG</option>
+              </select>
+            </div>
+            <div><label>Scale (1–3)</label><input id="p2iScale" type="number" min="1" max="3" step="0.5" value="2"></div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="p2iBtn">Export (ZIP)</button>
+            <button class="btn" id="clearP2i">Clear</button>
+          </div>
+          <p class="note">Large PDFs may take a while.</p>
+        </div>
+      </section>
+
+      <!-- OCR -->
+      <section class="card">
+        <h2>OCR (Experimental)</h2>
+        <div class="body">
+          <label>PDF (image-based preferred)</label>
+          <input id="ocrFile" type="file" accept="application/pdf" />
+          <div class="row" style="margin-top:8px">
+            <div>
+              <label>Language</label>
+              <select id="ocrLang">
+                <option value="eng">English (eng)</option>
+                <option value="jpn">日本語 (jpn)</option>
+              </select>
+            </div>
+            <div><label>Pages (first N)</label><input id="ocrPages" type="number" min="1" step="1" value="3"></div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="ocrBtn">Run OCR (Save TXT)</button>
+            <button class="btn" id="clearOcr">Clear</button>
+          </div>
+          <p class="note">The first run downloads language data; processing time depends on your device.</p>
+        </div>
+      </section>
+
+      <!-- Help -->
+      <section class="card">
+        <h2>Help & Samples</h2>
+        <div class="body">
+          <p class="pill">Tips</p>
+          <ul>
+            <li>All processing stays in your browser. Nothing gets uploaded.</li>
+            <li>For heavy jobs, split into smaller chunks.</li>
+            <li>Compression is best for image-heavy PDFs; text-only PDFs are better merged/split/edited as-is.</li>
+          </ul>
+          <details>
+            <summary>Create sample PDFs (for testing)</summary>
+            <div class="row" style="margin-top:8px">
+              <button class="btn" id="genA">Generate Sample A</button>
+              <button class="btn" id="genB">Generate Sample B</button>
+            </div>
+            <p class="note">Two-page PDFs will be downloaded.</p>
+          </details>
+          <div style="margin-top:8px">
+            <label>Log</label>
+            <div id="log" class="log">Ready.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="content">
+    <main class="wrap">
+      <h2 id="howto">Quick Start (3 minutes)</h2>
+      <p>This tool runs entirely in your browser. No uploads, safe for confidential material. Drag & drop files into the target card, pick options (ranges/quality/size), then click “Create/Save” — the output downloads automatically. Compression shines for scanned PDFs; Images→PDF auto-rotates via EXIF to keep smartphone orientation correct.</p>
+      <p>Typical flow: (1) Choose PDF/images → (2) Adjust options → (3) Create/Save → (4) File downloads. For large jobs, process in parts. For business workflows, combine page edit, watermarks and table-of-contents extraction to cut routine time.</p>
+
+      <div class="ad-block">
+        <ins class="adsbygoogle"
+             style="display:block; text-align:center; margin:24px auto;"
+             data-ad-client="ca-pub-8261009874978401"
+             data-ad-slot="REPLACE_WITH_SLOT_ID_2"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+      </div>
+
+      <h2 id="usecases">Use Cases (Blog / E-commerce / Reports)</h2>
+      <ul>
+        <li><strong>Blogging</strong>: Batch make proofing PDFs from article images; produce lightweight report PDFs after WebP conversion.</li>
+        <li><strong>E-commerce</strong>: Build delivery PDFs, checklists, size sheets from product photos; watermark to discourage reuse.</li>
+        <li><strong>Students/Labs</strong>: Split slide decks, compress scans, keep EXIF orientation in report PDFs.</li>
+        <li><strong>Back Office</strong>: Merge POs/invoices, fix rotations, extract ToC & split ranges for downstream data entry.</li>
+      </ul>
+
+      <h2 id="faq">FAQ</h2>
+      <details><summary>Is anything uploaded?</summary><p>No. Everything happens locally in your browser.</p></details>
+      <details><summary>Is it free?</summary><p>Yes. Heavy tasks depend on your device performance.</p></details>
+      <details><summary>Works offline?</summary><p>Install as a PWA to use main features offline.</p></details>
+
+      <h2 id="policy">Notes</h2>
+      <p>Follow applicable laws and contracts. For third-party copyright or personal data, ensure proper rights and anonymization. If legal validity of originals is required, consider formal electronic signatures (PAdES).</p>
+
+      <h2 id="contact">Contact</h2>
+      <p>Report issues or request features via <a href="/contact.html">Contact</a>.</p>
+      <p class="note">Last updated: 2025-09-10</p>
+    </main>
+  </div>
+
+  <div class="footer">
+    <p><a href="/terms.html">Terms</a> · <a href="/privacy.html">Privacy</a> · <a href="/contact.html">Contact</a></p>
+    <p class="note">© 2025 Simple PDF Tools Neo — Offline-ready / 100% In-Browser</p>
+  </div>
+</body>
+</html>
