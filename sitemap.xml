@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://sebasuchan2212.github.io/</loc><lastmod>2025-09-03</lastmod></url>
-  <url><loc>https://sebasuchan2212.github.io/en/</loc><lastmod>2025-09-03</lastmod></url>
-  <url><loc>https://sebasuchan2212.github.io/es/</loc><lastmod>2025-09-03</lastmod></url>
+  <url><loc>https://sebasuchan2212.github.io/about/</loc><lastmod>2025-09-10</lastmod><changefreq>weekly</changefreq></url>
+  <url><loc>https://sebasuchan2212.github.io/contact/</loc><lastmod>2025-09-10</lastmod><changefreq>weekly</changefreq></url>
+  <url><loc>https://sebasuchan2212.github.io/blog/</loc><lastmod>2025-09-10</lastmod><changefreq>weekly</changefreq></url>
+  <url><loc>https://sebasuchan2212.github.io/blog/how-to-compress-pdf/</loc><lastmod>2025-09-10</lastmod><changefreq>weekly</changefreq></url>
+  <url><loc>https://sebasuchan2212.github.io/blog/how-to-watermark-pdf/</loc><lastmod>2025-09-10</lastmod><changefreq>weekly</changefreq></url>
+  <url><loc>https://sebasuchan2212.github.io/blog/pdf-to-images/</loc><lastmod>2025-09-10</lastmod><changefreq>weekly</changefreq></url>
+  <url><loc>https://sebasuchan2212.github.io/privacy/</loc><lastmod>2025-09-10</lastmod><changefreq>weekly</changefreq></url>
+  <url><loc>https://sebasuchan2212.github.io/terms/</loc><lastmod>2025-09-10</lastmod><changefreq>weekly</changefreq></url>
 </urlset>
