@@ -1,4 +1,4 @@
-/* app-core.js — delegated binding, single source of truth (2025-09-10.1) */
+/* app-core.js — delegated binding, single source of truth (2025-09-10.2) */
 /* ========= Helpers ========= */
 const $ = (s)=>document.querySelector(s);
 const $$ = (s)=>Array.from(document.querySelectorAll(s));
@@ -67,7 +67,7 @@ const doSplit = safe(async ()=>{
 });
 const clearSplit = ()=>{ const a=$('#splitFile'); const b=$('#splitRanges'); if(a) a.value=''; if(b) b.value=''; log('Split: 入力クリア'); };
 
-// Compress (pdf.js + jsPDF)
+// Compress
 const updateQ = (e)=>{ const v = Number(e.target.value||0).toFixed(2); const q=$('#qVal'); if(q) q.textContent=v; };
 const updateS = (e)=>{ const v = Number(e.target.value||0).toFixed(2); const s=$('#sVal'); if(s) s.textContent=v; };
 const doCompress = safe(async ()=>{
@@ -313,13 +313,11 @@ const genA = ()=>{ const b=makeSample('Sample A',[46,134,222]); downloadBlob(b,'
 const genB = ()=>{ const b=makeSample('Sample B',[245,130,32]); downloadBlob(b,'sampleB.pdf'); log('サンプルB生成'); };
 
 /* ========= Delegated Binding ========= */
-/* クリックは document 1本で拾う（DOM差し替え・多言語でも常に反応） */
 document.addEventListener('click', (e)=>{
   const t = e.target;
   if (!(t instanceof Element)) return;
   const id = t.id;
   const act = t.getAttribute('data-act');
-  // Buttons by id
   switch(id){
     case 'mergeBtn': e.preventDefault(); doMerge(e); return;
     case 'clearMerge': e.preventDefault(); clearMerge(); return;
@@ -340,7 +338,6 @@ document.addEventListener('click', (e)=>{
     case 'genA': e.preventDefault(); genA(); return;
     case 'genB': e.preventDefault(); genB(); return;
   }
-  // Page editor thumb controls (data-act)
   if (act === 'rot' || act === 'hide'){
     const pageNo = Number(t.getAttribute('data-page')||'0');
     const item = editState.pages.find(p=>p.idx===pageNo);
@@ -350,21 +347,16 @@ document.addEventListener('click', (e)=>{
     renderThumbs();
   }
 });
-
-// 入力系の委譲（スライダー）
 document.addEventListener('input', (e)=>{
   const t = e.target;
   if (!(t instanceof Element)) return;
   if (t.id === 'quality') updateQ(e);
   if (t.id === 'scale') updateS(e);
 });
-
-// ファイル選択の委譲（ページ編集）
 document.addEventListener('change', (e)=>{
   const t = e.target;
   if (!(t instanceof Element)) return;
   if (t.id === 'editFile') onEditFileChange(e);
 });
 
-/* ========= Ready ========= */
 log('Core loaded (delegated binding)');
