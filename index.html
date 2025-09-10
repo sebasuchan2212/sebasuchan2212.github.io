@@ -13,6 +13,21 @@
   <link rel="alternate" hreflang="en" href="https://sebasuchan2212.github.io/en/">
   <link rel="alternate" hreflang="es" href="https://sebasuchan2212.github.io/es/">
   <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
+  <link rel="preconnect" href="https://googleads.g.doubleclick.net" crossorigin>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8261009874978401" crossorigin="anonymous"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    wait_for_update: 500
+  });
+  </script>
+
   <script src="/app-core.js" defer></script>
   <script src="/hotfix.js" defer></script>
   <script src="/lang-switch.js" defer></script>
@@ -22,6 +37,20 @@
       navigator.serviceWorker.register('/service-worker.js').catch(()=>{});
     });
   }
+  </script>
+  <script>
+  (function(){
+    function grant(){
+      if (typeof gtag!=='function') return;
+      gtag('consent','update',{
+        ad_storage:'granted', ad_user_data:'granted',
+        ad_personalization:'granted', analytics_storage:'granted'
+      });
+      try{ (adsbygoogle=window.adsbygoogle||[]).push({}); }catch(e){}
+    }
+    var agree = document.getElementById('agree');
+    if (agree) agree.addEventListener('click', grant);
+  })();
   </script>
 
   <meta property="og:type" content="website">
